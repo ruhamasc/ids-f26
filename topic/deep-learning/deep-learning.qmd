@@ -18,106 +18,120 @@ jupyter: python3
 
 ## About Me
 
-**Ruhama Choudhury**
-
 - **Education:** Dual-degree in Statistical Data Science and Economics, minor in History, University of Connecticut (graduating May 2028).
 - **Interests:** Sports analytics (association football/soccer), financial analysis, marketing analytics
 - **Why Deep Learning?** Understanding deep learning is crucial to understanding artificial intelligence, which is incredibly relevant in the world of data science and economics.
 
 ## What Is Deep Learning?
 
-**Deep Learning:** a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain
+**Deep Learning** is a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain (@ibm2025)
 
-## Deep Learning vs. Neural Networks
+It is responsible for powering most forms of Artificial Intelligence.
 
+# Deep Learning versus Neural Networks
 
-
-## Deep Learning vs. Machine Learning
-
-
-## Types of Deep Learning
-
-
-## Executable Python
-
-Use an executable code cell when the result matters. The source and its
-computed output stay together on the slide:
+## What is a Neural Network?
 
 ```{python}
-#| echo: true
-values = [2, 3, 5, 8]
-sum(values) / len(values)
-```
-
-Explain what the output means; do not leave it for the audience to infer.
-
-## Figures from the Same Source
-
-```{python}
-#| label: fig-example
-#| fig-cap: "Four observations used in the example"
+#| echo: false
 #| fig-align: center
 import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots()
-ax.bar(range(1, 5), values)
-ax.set(xlabel="Observation", ylabel="Value")
+def draw_nn(layers, labels, figsize=(8, 4.5)):
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.axis("off")
+    colors = ["#4C72B0"] + ["#DD8452"] * (len(layers) - 2) + ["#55A868"]
+
+    # (x, y) position of every neuron, centered vertically in its layer
+    pos = [[(i, j - (n - 1) / 2) for j in range(n)] for i, n in enumerate(layers)]
+
+    # connections: every neuron to every neuron in the next layer
+    for left, right in zip(pos[:-1], pos[1:]):
+        for (x1, y1) in left:
+            for (x2, y2) in right:
+                ax.plot([x1, x2], [y1, y2], color="gray", lw=0.6, alpha=0.5, zorder=1)
+
+    # neurons
+    for i, layer in enumerate(pos):
+        xs, ys = zip(*layer)
+        ax.scatter(xs, ys, s=600, color=colors[i], edgecolor="black", zorder=2)
+        ax.text(i, -max(layers) / 2 - 0.4, labels[i], ha="center", fontsize=12)
+
+    plt.show()
+
+draw_nn([3, 5, 5, 2], ["Input layer", "Hidden layer 1", "Hidden layer 2", "Output layer"])
+```
+
+- **Neural network:** a model that takes input data, recognizes patterns, then produces an output
+- Modeled after the neurons and synapses of a human brain
+
+## Brief History of Neural Networks
+
+- Late 1980s: Popularized before other methods/models (e.g. SVMs, boosting, random forests) were developed
+- 2000s: New methods and models outperformed and were thus preferred over neural networks
+- 2010s: Repopularized after being redeveloped into *deep learning*
+
+Source (@islp2023)
+
+## How Do the Two Differ?
+
+While there are a lot of overlaps and similarities, deep learning and neural networks are not inherently the same thing.
+
+- Deep learning typically contains several layers more than neural networks
+- A deep learning model must have at least 4 layers to be considered *deep*.
+
+# Deep Learning versus Machine Learning
+
+## How Does Deep Learning Fit Into Machine Learning?
+
+```{python}
+#| echo: false
+#| fig-align: center
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+
+fig, ax = plt.subplots(figsize=(6, 6))
+
+# (radius, fill color, label, label y-position)
+circles = [
+    (3, "#C9D8F0", "Artificial Intelligence", 5),
+    (2.2, "#F6C9A8", "Machine Learning",      3),
+    (1.2, "#B9E0C1", "Deep Learning",         1),
+]
+
+for r, color, label, label_y in circles:   # largest first, so smaller ones sit on top
+    ax.add_patch(Circle((0, r), r, facecolor=color, edgecolor="black", lw=1.5))
+    ax.text(0, label_y, label, ha="center", va="center",
+            fontsize=14, fontweight="bold")
+
+ax.set_xlim(-3.3, 3.3)
+ax.set_ylim(-0.3, 6.3)
+ax.set_aspect("equal")   # keeps circles round instead of oval
+ax.axis("off")
 plt.show()
 ```
 
-The source, computation, and resulting figure remain together and can be
-reproduced during review.
+## Deep Learning versus Machine Learning
 
-## Use Images Responsibly
+| | Machine Learning | Deep Learning |
+|---|---|---|
+| Data | Small to medium datasets | Large datasets |
+| Feature Engineering | Done manually by humans | Learned automatically by the model |
+| Training Time | Needs less time | Needs a lot of time |
+| Complexity | Less complex | Highly complex |
+| Hardware & Computing Power | CPU; needs less computing power | GPU; needs a lot of computing power |
+| Interpretability | Easier | Harder (considered a *black box*) |
 
-- Prefer figures generated from your own code.
-- Use relative paths for local images.
-- Include informative alternative text.
-- Verify that external images may be redistributed.
-- Attribute the creator and source.
+: {tbl-colwidths="[30,35,35]"}
 
-Do not paste an unattributed image from a search result into the repository.
+Source; @gfg2026
 
-## Keep Slides Readable
+# Types of Deep Learning
 
-- Use short statements rather than prose paragraphs.
-- Avoid presenting more code than the audience can follow.
-- Label tables, axes, and important quantities.
-- Define unfamiliar notation and abbreviations.
-- Use incremental lists only when they improve the explanation.
 
-## Connect the Deck to the Notes
+# A Practical Application of Deep Learning
 
-The slide deck is published separately from the book. Add a short entry to the
-relevant topical chapter containing:
 
-- the presentation title;
-- the presenter's name;
-- a link to the rendered slides; and
-- a two- or three-sentence abstract.
 
-You do not need to rewrite the deck as a prose section.
-
-## Check Before Opening a Pull Request
-
-From an active course Python environment, run:
-
-```bash
-make render-one FILE=topic/last-name-topic/index.qmd
-```
-
-Then verify the slides in a browser and inspect `git status`. Submit the source
-files, not rendered HTML, caches, or notebook intermediates.
-
-## Takeaways
-
-- A good deck presents one coherent, technically correct story.
-- Executable examples make results inspectable and reproducible.
-- Interpretation and limitations matter as much as code.
-- The pull request is part of the contribution and revision process.
 
 ## Sources
-
-- [Quarto presentations](https://quarto.org/docs/presentations/)
-- [RevealJS format options](https://quarto.org/docs/presentations/revealjs/)
-- [Quarto computations with Python](https://quarto.org/docs/computations/python.html)
