@@ -10,6 +10,7 @@ format:
     preview-links: auto
     theme: default
     incremental: false
+bibliography: references.bib
 project:
   type: default
 jupyter: python3
@@ -21,25 +22,21 @@ jupyter: python3
 
 - **Education:** Dual-degree in Statistical Data Science and Economics, minor in History, University of Connecticut (graduating May 2028).
 - **Interests:** Sports analytics (association football/soccer), financial analysis, marketing analytics
-- **Why Deep Learning?** Understanding deep learning is crucial to understanding artificial intelligence, which is incredibly relevant in the world of data science today.
+- **Why Deep Learning?** Understanding deep learning is crucial to understanding artificial intelligence, which is incredibly relevant in the world of data science and economics.
+
+## What Is Deep Learning?
+
+**Deep Learning:** a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain
+
+## Deep Learning vs. Neural Networks
 
 
 
-## Why RevealJS?
+## Deep Learning vs. Machine Learning
 
-- Write slides in plain-text Quarto and Markdown.
-- Keep explanation, code, results, and citations together.
-- Produce an interactive HTML presentation.
-- Track and review the source with Git and GitHub.
 
-## Prefer a Focused Story
+## Types of Deep Learning
 
-1. Motivate the topic.
-2. Explain the main idea.
-3. Work through a reproducible example.
-4. Interpret the result.
-5. Discuss limitations or common mistakes.
-6. End with two or three takeaways.
 
 ## Executable Python
 
