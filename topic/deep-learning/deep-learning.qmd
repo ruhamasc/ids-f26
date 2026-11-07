@@ -22,6 +22,8 @@ jupyter: python3
 - **Interests:** Sports analytics (association football/soccer), financial analysis, marketing analytics
 - **Why Deep Learning?** Understanding deep learning is crucial to understanding artificial intelligence, which is incredibly relevant in the world of data science and economics.
 
+# What Is Deep Learning?
+
 ## What Is Deep Learning?
 
 **Deep Learning** is a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain (@ibm2025)
@@ -62,8 +64,11 @@ def draw_nn(layers, labels, figsize=(8, 4.5)):
 draw_nn([3, 5, 5, 2], ["Input layer", "Hidden layer 1", "Hidden layer 2", "Output layer"])
 ```
 
-- **Neural network:** a model that takes input data, recognizes patterns, then produces an output
-- Modeled after the neurons and synapses of a human brain
+**Neural network:** a model that takes input data, recognizes patterns, then produces an output
+
+- Consists of a system of neurons (or **nodes**) that form connections
+- Each connection has a **weight** that determines input importance
+- Each node has a **bias** that determines the direction of the input
 
 ## Brief History of Neural Networks
 
@@ -128,10 +133,68 @@ Source; @gfg2026
 
 # Types of Deep Learning
 
+## Types of Deep Learning
+
+| Type | Purpose/Application |
+|---|---|
+| **Feedforward Neural Networks (FNNs)** | Classification and regression |
+| **Convolutional Neural Networks (CNNs)** | Processing image data |
+| **Recurrent Neural Networks (RNNs)** | Processing sequential data |
+| **Autoencoders** | Compressing (encoding) and reconstructing (decoding) input data |
+| **Transformer models** | Processing sequential data |
+| **Mamba models** | Processing sequential data |
+| **Generative adversarial networks (GANs)** | Creating new data that resembles training data |
+| **Graph neural networks** | Modeing complex relationships |
+
 
 # A Practical Application of Deep Learning
 
+## Example: Reading Handwritten Digits
 
+```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+
+digits = load_digits()
+fig, axes = plt.subplots(1, 8, figsize=(10, 2))
+for ax, img, label in zip(axes, digits.images, digits.target):
+    ax.imshow(img, cmap="gray_r")
+    ax.set_title(label)
+    ax.axis("off")
+plt.show()
+```
+
+Each image is 8 × 8 = 64 pixels → 64 input neurons
+
+## Training a Neural Network
+
+```{python}
+#| echo: true
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+
+X_train, X_test, y_train, y_test = train_test_split(
+    digits.data / 16, digits.target, test_size=0.25, random_state=3255)
+
+model = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=500,
+                      random_state=3255)
+model.fit(X_train, y_train)
+print(f"Test accuracy: {model.score(X_test, y_test):.1%}")
+```
+
+## Results
+
+```{python}
+#| echo: false
+preds = model.predict(X_test)
+fig, axes = plt.subplots(2, 8, figsize=(10, 3))
+for ax, img, p, t in zip(axes.flat, X_test, preds, y_test):
+    ax.imshow(img.reshape(8, 8), cmap="gray_r")
+    ax.set_title(f"pred {p}", color="green" if p == t else "red")
+    ax.axis("off")
+plt.show()
+```
 
 
 ## Sources
