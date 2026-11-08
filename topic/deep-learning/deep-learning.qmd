@@ -148,7 +148,7 @@ Source: @gfg2026
 
 ## Feedforward Neural Networks (FNNs)
 
-| Feature | Idea |
+| Feature | Explanation |
 |---|---|
 | **Process** | Information flows in one direction directly from input layer to hidden layer(s) to output layer |
 | **Purpose** | General-purpose method, typically used for classification and regression |
@@ -158,13 +158,23 @@ Source: @gfg2026
 
 ## Convolutional Neural Networks (CNNs)
 
-| Feature | Idea |
+| Feature | Explanation |
 |---|---|
 | **Process** | Filters across an image to identify local patterns, slowly identifying increasingly complex patterns |
 | **Purpose** | Handles grid-shaped data (specifically images) |
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
 | **Unique Aspects** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
 | **Other Information** | Pooling layers in the network shrink the image throughout the processs |
+
+## Recurrent Neural Networks (RNNs)
+
+| Feature | Explanation |
+|---|---|
+| **Process** | Reads a sequence one step at a time while running a memory of what it has seen up to that point; each step combines the new input with the existing memory |
+| **Purpose** | Handles sequential data |
+| **Example(s) of Application** | Speech recognition, forecasting time series (weather, stock prices) |
+| **Unique Aspects** | Earlier inputs influence later outputs |
+| **Other Information** | Struggle to remember things from far back; tend to be slow |
 
 # A Practical Application
 
