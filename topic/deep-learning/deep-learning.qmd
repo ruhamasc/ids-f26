@@ -83,7 +83,7 @@ Source (@islp2023)
 While there are a lot of overlaps and similarities, deep learning and neural networks are not inherently the same thing.
 
 - Deep learning typically contains several layers more than neural networks
-- A deep learning model must have at least 4 layers to be considered *deep*.
+- A deep learning model must have at least 4 layers to be considered *deep*
 
 # Deep Learning versus Machine Learning
 
@@ -129,7 +129,7 @@ plt.show()
 
 : {tbl-colwidths="[30,35,35]"}
 
-Source; @gfg2026
+Source: @gfg2026
 
 # Types of Deep Learning
 
@@ -144,15 +144,23 @@ Source; @gfg2026
 | **Transformer models** | Processing sequential data |
 | **Mamba models** | Processing sequential data |
 | **Generative adversarial networks (GANs)** | Creating new data that resembles training data |
-| **Graph neural networks** | Modeing complex relationships |
+| **Graph neural networks** | Modeling complex relationships |
 
+## Feedforward Neural Networks
 
-# A Practical Application of Deep Learning
+| Feature | Idea |
+|---|---|
+| **Process** | Information flows in one direction directly from input layer to hidden layer(s) to output layer |
+| **Purpose** | General-purpose method, typically used for classification and regression |
+| **Unique Aspects** | Simplest type of deep learning; has no memory of previous inputs |
+| **Other Information** | Also known as *multilayer perceptron MLP* |
+
+# A Practical Application
 
 ## Example: Reading Handwritten Digits
 
 ```{python}
-#| echo: false
+#| echo: true
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_digits
 
