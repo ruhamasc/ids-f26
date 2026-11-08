@@ -140,9 +140,9 @@ Source: @gfg2026
 | **Feedforward Neural Networks (FNNs)** | Classification and regression |
 | **Convolutional Neural Networks (CNNs)** | Processing image data |
 | **Recurrent Neural Networks (RNNs)** | Processing sequential data |
-| **Autoencoders** | Compressing (encoding) and reconstructing (decoding) input data |
 | **Transformer models** | Processing sequential data |
 | **Mamba models** | Processing sequential data |
+| **Autoencoders** | Compressing (encoding) and reconstructing (decoding) input data |
 | **Generative adversarial networks (GANs)** | Creating new data that resembles training data |
 | **Graph neural networks** | Modeling complex relationships |
 
@@ -195,6 +195,37 @@ Source: @gfg2026
 | **Example(s) of Application** | DNA and genomics sequences, audio, long time series |
 | **How it Differs** | Cost grows linearly, trains faster, remembers better |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
+
+## Autoencoders
+
+| Feature | Explanation |
+|---|---|
+| **Process** | The encoder half compresses the input into a summary and the decoder half tries to rebuild the original from the summary |
+| **Purpose** | Learning the most important features of data without labels |
+| **Example(s) of Application** | Fraud and anomaly detection, removing noise from images, compressing data |
+| **How it Differs** | No labels, no "right answer" since the data itself is the intended output |
+| **Other Information** | *Variational encoders (VAEs)* can generate new data |
+
+## Generative Adversarial Networks (GANs)
+
+| Feature | Explanation |
+|---|---|
+| **Process** | The generator network creates fake data from random noise, the discriminator network tries to tell real data from fake data |
+| **Purpose** | Generating new data |
+| **Example(s) of Application** | Creating synthetic training data, turning sketches into photos, deepfakes |
+| **How it Differs** | Creates new data rather than predicting labels |
+| **Other Information** | Hard to train, typically unstable |
+
+## Graph Neural Networks (GNNs)
+
+| Feature | Explanation |
+|---|---|
+| **Process** | The data is a graph (network); nodes update their inputs by collecting information from neighboring nodes |
+| **Purpose** | Learning from data defined by relationships |
+| **Example(s) of Application** | Traffic and arrival-time predictions in map apps |
+| **How it Differs** | Handles any network shape |
+| **Other Information** | Tend to have fairly few layers |
+
 # A Practical Application
 
 ## Example: Reading Handwritten Digits
