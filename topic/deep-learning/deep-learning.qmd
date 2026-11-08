@@ -153,7 +153,7 @@ Source: @gfg2026
 | **Process** | Information flows in one direction directly from input layer to hidden layer(s) to output layer |
 | **Purpose** | General-purpose method, typically used for classification and regression |
 | **Example(s) of Application** | Predicting loan default |
-| **Unique Aspects** | Simplest type of deep learning; has no memory of previous inputs |
+| **How it Differs** | Simplest type of deep learning; has no memory of previous inputs |
 | **Other Information** | Also known as *multilayer perceptron MLP* |
 
 ## Convolutional Neural Networks (CNNs)
@@ -163,7 +163,7 @@ Source: @gfg2026
 | **Process** | Filters across an image to identify local patterns, slowly identifying increasingly complex patterns |
 | **Purpose** | Handles grid-shaped data (specifically images) |
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
-| **Unique Aspects** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
+| **How it Differs** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
 | **Other Information** | Pooling layers in the network shrink the image throughout the processs |
 
 ## Recurrent Neural Networks (RNNs)
@@ -173,9 +173,28 @@ Source: @gfg2026
 | **Process** | Reads a sequence one step at a time while running a memory of what it has seen up to that point; each step combines the new input with the existing memory |
 | **Purpose** | Handles sequential data |
 | **Example(s) of Application** | Speech recognition, forecasting time series (weather, stock prices) |
-| **Unique Aspects** | Earlier inputs influence later outputs |
+| **How it Differs** | Earlier inputs influence later outputs |
 | **Other Information** | Struggle to remember things from far back; tend to be slow |
 
+## Transformer Models
+
+| Feature | Explanation |
+|---|---|
+| **Process** | Processes the whole sequence at once, using positional encodings to keep track of word order |
+| **Purpose** | Handles sequential data (especially language) |
+| **Example(s) of Application** | Chatbots and large language models |
+| **How it Differs** | Much fater than RNNs, better at long-range connections |
+| **Other Information** | Tends to be costly |
+
+## Mamba Models
+
+| Feature | Explanation |
+|---|---|
+| **Process** | Selectively moves through a sequences while keeping a running memory |
+| **Purpose** | Handles (very long) sequential data |
+| **Example(s) of Application** | DNA and genomics sequences, audio, long time series |
+| **How it Differs** | Cost grows linearly, trains faster, remembers better |
+| **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
 # A Practical Application
 
 ## Example: Reading Handwritten Digits
