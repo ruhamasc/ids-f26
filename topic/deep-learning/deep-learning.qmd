@@ -534,10 +534,10 @@ show_model("mamba")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | *Encoder* half compresses the input into a summary, *decoder* half tries to rebuild the original from the summary |
+| **Process** | *Encoder* compresses input into a summary, *decoder* tries to rebuild the original from the summary |
 | **Purpose** | Learning the most important features of data without labels |
-| **Example(s) of Application** | Fraud and anomaly detection, removing noise from images, compressing data |
-| **How it Differs** | No labels, no "right answer" since the data itself is the intended output |
+| **Example(s) of Application** | Fraud and anomaly detection |
+| **How it Differs** | No "right answer" since the data itself is the intended output |
 | **Other Information** | *Variational encoders (VAEs)* can generate new data |
 
 :::
