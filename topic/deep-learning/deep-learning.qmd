@@ -6,6 +6,11 @@ format:
   revealjs:
     width: 1280
     height: 720
+    include-in-header:
+      text: |
+        <style>
+        .v-center-container { display: flex; flex-direction: row; justify-content: center; height: 90%; }
+        </style>
     slide-number: true
     preview-links: auto
     theme: default
@@ -15,6 +20,245 @@ project:
   type: default
 jupyter: python3
 ---
+
+```{python}
+#| include: false
+"""
+Schematic diagrams of 8 deep learning architectures, drawn with matplotlib.
+
+Model names: "feedforward", "cnn", "rnn", "autoencoder",
+             "transformer", "mamba", "gan", "gnn"
+"""
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch, Rectangle
+
+# ---- shared colors (same as the earlier network diagram) -------------------
+BLUE, ORANGE, GREEN = "#4C72B0", "#DD8452", "#55A868"
+PURPLE, RED, GRAY, LIGHT = "#8172B3", "#C44E52", "#8C8C8C", "#D9D9D9"
+
+
+# ---- small drawing helpers ---------------------------------------------------
+def _setup(ax):
+    """Every panel uses the same 10 x 6 canvas."""
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 6)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+
+def _node(ax, x, y, color, r=0.28, text="", fs=8):
+    ax.add_patch(Circle((x, y), r, facecolor=color, edgecolor="black", lw=1, zorder=3))
+    if text:
+        ax.text(x, y, text, ha="center", va="center", fontsize=fs, color="white", zorder=4)
+
+
+def _line(ax, p, q, color=GRAY, lw=0.7, alpha=0.6):
+    ax.plot([p[0], q[0]], [p[1], q[1]], color=color, lw=lw, alpha=alpha, zorder=1)
+
+
+def _arrow(ax, p, q, color="black", lw=1.4, ls="-", rad=0.0):
+    ax.add_patch(FancyArrowPatch(p, q, arrowstyle="-|>", mutation_scale=12, color=color,
+                                 lw=lw, linestyle=ls, zorder=2,
+                                 connectionstyle=f"arc3,rad={rad}"))
+
+
+def _box(ax, x, y, w, h, color, text="", fs=9, tc="white"):
+    ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h,
+                                boxstyle="round,pad=0.04,rounding_size=0.12",
+                                facecolor=color, edgecolor="black", lw=1, zorder=3))
+    if text:
+        ax.text(x, y, text, ha="center", va="center", fontsize=fs, color=tc, zorder=4)
+
+
+def _layers(ax, sizes, xs, colors, ymid=3.0, gap=1.0, r=0.28):
+    """Fully connected layers of neurons."""
+    pos = [[(x, ymid + (j - (n - 1) / 2) * gap) for j in range(n)] for x, n in zip(xs, sizes)]
+    for left, right in zip(pos[:-1], pos[1:]):
+        for p in left:
+            for q in right:
+                _line(ax, p, q)
+    for layer, c in zip(pos, colors):
+        for (x, y) in layer:
+            _node(ax, x, y, c, r)
+    return pos
+
+
+def _grid(ax, x0, y0, n, cell, color):
+    for i in range(n):
+        for j in range(n):
+            ax.add_patch(Rectangle((x0 + i * cell, y0 + j * cell), cell, cell,
+                                   facecolor=color, edgecolor="white", lw=0.8, zorder=2))
+
+
+# ---- the 8 diagrams ----------------------------------------------------------
+def draw_feedforward(ax):
+    _setup(ax)
+    xs = [1.5, 4, 6.5, 9]
+    _layers(ax, [3, 4, 4, 2], xs, [BLUE, ORANGE, ORANGE, GREEN], ymid=3.1)
+    for x, t in zip(xs, ["Input", "Hidden", "Hidden", "Output"]):
+        ax.text(x, 0.6, t, ha="center", fontsize=9)
+    _arrow(ax, (3, 5.4), (7.5, 5.4))
+    ax.text(5.25, 5.6, "information flows one way", ha="center", fontsize=9)
+
+
+def draw_cnn(ax):
+    _setup(ax)
+    # input image with the filter window highlighted
+    _grid(ax, 0.3, 1.2, 6, 0.55, BLUE)
+    ax.add_patch(Rectangle((0.3, 2.85), 1.65, 1.65, fill=False, edgecolor=RED, lw=2.5, zorder=4))
+    ax.text(1.1, 4.75, "filter", ha="center", fontsize=9, color=RED)
+    # stack of feature maps (back to front)
+    for k in [2, 1, 0]:
+        _grid(ax, 4.6 + k * 0.3, 1.7 + k * 0.3, 4, 0.45, ORANGE)
+    ax.add_patch(Rectangle((4.6, 3.05), 0.45, 0.45, fill=False, edgecolor=RED, lw=2, zorder=4))
+    _line(ax, (1.95, 4.5), (4.6, 3.5), color=RED, lw=1, alpha=0.8)
+    _line(ax, (1.95, 2.85), (4.6, 3.05), color=RED, lw=1, alpha=0.8)
+    # pooling and output
+    _arrow(ax, (7.05, 3.0), (7.4, 3.0))
+    _grid(ax, 7.5, 2.55, 2, 0.45, PURPLE)
+    _arrow(ax, (8.45, 3.0), (9.05, 3.0))
+    _node(ax, 9.45, 3.0, GREEN, r=0.35, text="cat", fs=7)
+    for x, t in [(1.95, "Image"), (5.4, "Feature maps"), (7.95, "Pooled"), (9.45, "Label")]:
+        ax.text(x, 0.6, t, ha="center", fontsize=9)
+
+
+def draw_rnn(ax):
+    _setup(ax)
+    xs = [1.5, 4, 6.5, 9]
+    words = ["The", "cat", "sat", "down"]
+    for i, (x, w) in enumerate(zip(xs, words), start=1):
+        _node(ax, x, 1.3, BLUE, r=0.35, text=f"x{i}")
+        ax.text(x, 0.45, w, ha="center", fontsize=9)
+        _box(ax, x, 3.0, 1.1, 0.75, ORANGE, f"h{i}")
+        _node(ax, x, 4.8, GREEN, r=0.35, text=f"y{i}")
+        _arrow(ax, (x, 1.65), (x, 2.6))
+        _arrow(ax, (x, 3.4), (x, 4.43))
+    for a, b in zip(xs[:-1], xs[1:]):
+        _arrow(ax, (a + 0.58, 3.0), (b - 0.58, 3.0), color=ORANGE, lw=2.2)
+        ax.text((a + b) / 2, 3.4, "memory", ha="center", fontsize=8, color=ORANGE)
+    ax.text(5.25, 5.55, "reads one step at a time", ha="center", fontsize=9)
+
+
+def draw_autoencoder(ax):
+    _setup(ax)
+    xs = [1, 3, 5, 7, 9]
+    _layers(ax, [5, 3, 2, 3, 5], xs, [BLUE, ORANGE, PURPLE, ORANGE, GREEN], ymid=3.0, gap=0.9)
+    ax.text(5, 4.0, "code", ha="center", fontsize=9, color=PURPLE, fontweight="bold")
+    ax.text(1, 5.3, "Input", ha="center", fontsize=9)
+    ax.text(9, 5.3, "Output ≈ Input", ha="center", fontsize=9)
+    ax.text(2.5, 0.35, "Encoder (compress)", ha="center", fontsize=9)
+    ax.text(7.5, 0.35, "Decoder (rebuild)", ha="center", fontsize=9)
+
+
+def draw_transformer(ax):
+    _setup(ax)
+    words = ["The", "cat", "sat", "on", "the", "mat"]
+    xs = [1 + i * 1.6 for i in range(len(words))]
+    focus = 2                                     # "sat"
+    weights = [0.3, 0.9, None, 0.45, 0.15, 0.65]  # how much "sat" attends to each word
+    for i, (x, w) in enumerate(zip(xs, words)):
+        if i != focus:
+            rad = -0.7 if x > xs[focus] else 0.7   # arcs bend upward
+            _arrow(ax, (xs[focus], 1.95), (x, 1.95), color=ORANGE,
+                   lw=0.8 + 4 * weights[i], rad=rad)
+    for i, (x, w) in enumerate(zip(xs, words)):
+        _box(ax, x, 1.55, 1.3, 0.7, ORANGE if i == focus else BLUE, w)
+    ax.text(5, 5.3, 'Attention: how much should "sat"\nlook at each other word?',
+            ha="center", fontsize=9)
+    ax.text(5, 0.6, "thicker arrow = more attention · all words processed at once",
+            ha="center", fontsize=8)
+
+
+def draw_mamba(ax):
+    _setup(ax)
+    words = ["The", "um", "cat", "uh", "sat", "down"]
+    keep = [True, False, True, False, True, True]
+    xs = [1 + i * 1.6 for i in range(len(words))]
+    for x, w, k in zip(xs, words, keep):
+        _box(ax, x, 1.2, 1.2, 0.7, BLUE if k else LIGHT, w, tc="white" if k else "dimgray")
+        _arrow(ax, (x, 1.6), (x, 2.8), color="black" if k else GRAY,
+               ls="-" if k else "--", lw=1.4 if k else 1)
+        ax.text(x + 0.25, 2.15, "keep" if k else "skip", fontsize=7,
+                color="black" if k else GRAY)
+        _box(ax, x, 3.2, 0.75, 0.75, ORANGE)
+    for a, b in zip(xs[:-1], xs[1:]):
+        _arrow(ax, (a + 0.42, 3.2), (b - 0.42, 3.2), color=ORANGE, lw=2.2)
+    ax.text(5, 4.0, "small running memory (state)", ha="center", fontsize=9, color=ORANGE)
+    ax.text(5, 5.2, "Selective: chooses what to remember,\none pass, cost grows linearly",
+            ha="center", fontsize=9)
+
+
+def draw_gan(ax):
+    _setup(ax)
+    _box(ax, 1.0, 4.0, 1.4, 0.8, GRAY, "Noise")
+    _box(ax, 3.5, 4.0, 2.0, 0.9, ORANGE, "Generator")
+    _box(ax, 6.0, 4.0, 1.5, 0.8, RED, "Fake")
+    _box(ax, 6.0, 1.6, 1.5, 0.8, BLUE, "Real")
+    _box(ax, 8.55, 2.8, 2.5, 0.9, PURPLE, "Discriminator", fs=8)
+    _arrow(ax, (1.72, 4.0), (2.48, 4.0))
+    _arrow(ax, (4.52, 4.0), (5.23, 4.0))
+    _arrow(ax, (6.77, 3.85), (7.7, 3.15))
+    _arrow(ax, (6.77, 1.75), (7.7, 2.45))
+    ax.text(8.6, 1.75, "real or fake?", ha="center", fontsize=9)
+    _arrow(ax, (8.6, 3.28), (3.5, 4.48), color=GRAY, ls="--", rad=0.35)
+    ax.text(5.6, 5.55, "feedback: generator learns to fool the discriminator",
+            ha="center", fontsize=8, color="dimgray")
+
+
+def draw_gnn(ax):
+    _setup(ax)
+    pos = {"c": (5, 3), "a": (3.2, 4.4), "b": (3.0, 1.6), "d": (6.9, 4.5),
+           "e": (7.1, 1.7), "f": (1.2, 3.1), "g": (8.9, 3.3), "h": (5.2, 5.3)}
+    neighbors = ["a", "b", "d", "e"]
+    other_edges = [("a", "f"), ("b", "f"), ("d", "g"), ("e", "g"), ("a", "h"), ("d", "h"), ("a", "b")]
+    for u, v in other_edges:
+        _line(ax, pos[u], pos[v], lw=1.2, alpha=0.8)
+    for n in neighbors:                     # messages flow into the center node
+        x, y = pos[n]
+        cx, cy = pos["c"]
+        dx, dy = cx - x, cy - y
+        d = (dx ** 2 + dy ** 2) ** 0.5
+        _arrow(ax, (x + dx / d * 0.4, y + dy / d * 0.4),
+               (cx - dx / d * 0.45, cy - dy / d * 0.45), color=ORANGE, lw=2.2)
+    for n, (x, y) in pos.items():
+        _node(ax, x, y, ORANGE if n == "c" else BLUE, r=0.4)
+    ax.text(5, 0.4, "each node gathers messages from its neighbors",
+            ha="center", fontsize=9)
+
+
+# ---- public functions ----------------------------------------------------------
+MODELS = {
+    "feedforward": ("Feedforward network", draw_feedforward),
+    "cnn":         ("Convolutional network (CNN)", draw_cnn),
+    "rnn":         ("Recurrent network (RNN)", draw_rnn),
+    "autoencoder": ("Autoencoder", draw_autoencoder),
+    "transformer": ("Transformer", draw_transformer),
+    "mamba":       ("Mamba (state space model)", draw_mamba),
+    "gan":         ("Generative adversarial network (GAN)", draw_gan),
+    "gnn":         ("Graph neural network (GNN)", draw_gnn),
+}
+
+
+def show_model(name, figsize=(8, 4.8), title=False):
+    """Draw one model on its own figure (good for one slide per model)."""
+    label, draw = MODELS[name]
+    fig, ax = plt.subplots(figsize=figsize)
+    draw(ax)
+    if title:
+        ax.set_title(label, fontsize=13, fontweight="bold")
+    plt.tight_layout()
+    plt.show()
+
+
+def overview(figsize=(16, 6.6)):
+    """All 8 models in a 2 x 4 grid (good for a summary slide)."""
+    fig, axes = plt.subplots(2, 4, figsize=figsize)
+    for ax, (label, draw) in zip(axes.flat, MODELS.values()):
+        draw(ax)
+        ax.set_title(label, fontsize=11, fontweight="bold")
+    plt.tight_layout()
+    plt.show()
+```
 
 ## About Me
 
@@ -116,16 +360,16 @@ ax.axis("off")
 plt.show()
 ```
 
-## Deep Learning versus Machine Learning
+## Deep Learning versus Machine Learning {.smaller}
 
 | | Machine Learning | Deep Learning |
 |---|---|---|
-| Data | Small to medium datasets | Large datasets |
-| Feature Engineering | Done manually by humans | Learned automatically by the model |
-| Training Time | Needs less time | Needs a lot of time |
-| Complexity | Less complex | Highly complex |
-| Hardware & Computing Power | CPU; needs less computing power | GPU; needs a lot of computing power |
-| Interpretability | Easier | Harder (considered a *black box*) |
+| **Data** | Small to medium datasets | Large datasets |
+| **Feature Engineering** | Done manually by humans | Learned automatically by the model |
+| **Training Time**| Needs less time | Needs a lot of time |
+| **Complexity** | Less complex | Highly complex |
+| **Hardware & Computing Power** | CPU; needs less computing power | GPU; needs a lot of computing power |
+| **Interpretability** | Easier | Harder (considered a *black box*) |
 
 : {tbl-colwidths="[30,35,35]"}
 
@@ -133,7 +377,7 @@ Source: @gfg2026
 
 # Types of Deep Learning
 
-## Types of Deep Learning
+## Types of Deep Learning {.smaller}
 
 | Type | Purpose/Application |
 |---|---|
@@ -144,9 +388,15 @@ Source: @gfg2026
 | **Mamba models** | Processing sequential data |
 | **Autoencoders** | Compressing (encoding) and reconstructing (decoding) input data |
 | **Generative adversarial networks (GANs)** | Creating new data that resembles training data |
-| **Graph neural networks** | Modeling complex relationships |
+| **Graph neural networks (GNNs)** | Modeling complex relationships |
 
-## Feedforward Neural Networks (FNNs)
+: {tbl-colwidths="[40,60]"}
+
+## Feedforward Neural Networks (FNNs) {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -156,7 +406,24 @@ Source: @gfg2026
 | **How it Differs** | Simplest type of deep learning; has no memory of previous inputs |
 | **Other Information** | Also known as *multilayer perceptron MLP* |
 
-## Convolutional Neural Networks (CNNs)
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("feedforward")
+```
+
+:::
+
+::::
+
+## Convolutional Neural Networks (CNNs) {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -166,7 +433,24 @@ Source: @gfg2026
 | **How it Differs** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
 | **Other Information** | Pooling layers in the network shrink the image throughout the processs |
 
-## Recurrent Neural Networks (RNNs)
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("cnn")
+```
+
+:::
+
+::::
+
+## Recurrent Neural Networks (RNNs) {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -176,7 +460,24 @@ Source: @gfg2026
 | **How it Differs** | Earlier inputs influence later outputs |
 | **Other Information** | Struggle to remember things from far back; tend to be slow |
 
-## Transformer Models
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("rnn")
+```
+
+:::
+
+::::
+
+## Transformer Models {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -186,7 +487,24 @@ Source: @gfg2026
 | **How it Differs** | Much fater than RNNs, better at long-range connections |
 | **Other Information** | Tends to be costly |
 
-## Mamba Models
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("transformer")
+```
+
+:::
+
+::::
+
+## Mamba Models {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -196,7 +514,24 @@ Source: @gfg2026
 | **How it Differs** | Cost grows linearly, trains faster, remembers better |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
 
-## Autoencoders
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("mamba")
+```
+
+:::
+
+::::
+
+## Autoencoders {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -206,7 +541,24 @@ Source: @gfg2026
 | **How it Differs** | No labels, no "right answer" since the data itself is the intended output |
 | **Other Information** | *Variational encoders (VAEs)* can generate new data |
 
-## Generative Adversarial Networks (GANs)
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("autoencoder")
+```
+
+:::
+
+::::
+
+## Generative Adversarial Networks (GANs) {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -216,7 +568,24 @@ Source: @gfg2026
 | **How it Differs** | Creates new data rather than predicting labels |
 | **Other Information** | Hard to train, typically unstable |
 
-## Graph Neural Networks (GNNs)
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("gan")
+```
+
+:::
+
+::::
+
+## Graph Neural Networks (GNNs) {.smaller}
+
+:::: {.rows}
+
+::: {.row width="50%"}
 
 | Feature | Explanation |
 |---|---|
@@ -225,6 +594,19 @@ Source: @gfg2026
 | **Example(s) of Application** | Traffic and arrival-time predictions in map apps |
 | **How it Differs** | Handles any network shape |
 | **Other Information** | Tend to have fairly few layers |
+
+:::
+
+::: {.row width="50%" .v-center-container}
+
+```{python}
+#| echo: false
+show_model("gnn")
+```
+
+:::
+
+::::
 
 # A Practical Application
 
@@ -274,6 +656,5 @@ for ax, img, p, t in zip(axes.flat, X_test, preds, y_test):
     ax.axis("off")
 plt.show()
 ```
-
 
 ## Sources
