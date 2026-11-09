@@ -10,12 +10,15 @@ format:
       text: |
         <style>
         .v-center-container { display: flex; flex-direction: row; justify-content: center; height: 90%; }
+        .reveal .row img { max-width: 100%; max-height: 520px; object-fit: contain; }
         </style>
     slide-number: true
     preview-links: auto
     theme: default
     incremental: false
 bibliography: references.bib
+nocite: |
+  @*
 project:
   type: default
 jupyter: python3
@@ -239,7 +242,7 @@ MODELS = {
 }
 
 
-def show_model(name, figsize=(8, 4.8), title=False):
+def show_model(name, figsize=(5.5, 3.3), title=False):
     """Draw one model on its own figure (good for one slide per model)."""
     label, draw = MODELS[name]
     fig, ax = plt.subplots(figsize=figsize)
@@ -270,13 +273,13 @@ def overview(figsize=(16, 6.6)):
 
 ## What Is Deep Learning?
 
-**Deep Learning** is a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain (@ibm2025)
+**Deep Learning** is a subset of machine learning driven by mutilayered neural networks inspired by the structure of the human brain
 
 It is responsible for powering most forms of Artificial Intelligence.
 
 # Deep Learning versus Neural Networks
 
-## What is a Neural Network?
+## What is a Neural Network? {.smaller}
 
 ```{python}
 #| echo: false
@@ -319,8 +322,6 @@ draw_nn([3, 5, 5, 2], ["Input layer", "Hidden layer 1", "Hidden layer 2", "Outpu
 - Late 1980s: Popularized before other methods/models (e.g. SVMs, boosting, random forests) were developed
 - 2000s: New methods and models outperformed and were thus preferred over neural networks
 - 2010s: Repopularized after being redeveloped into *deep learning*
-
-Source (@islp2023)
 
 ## How Do the Two Differ?
 
@@ -373,26 +374,24 @@ plt.show()
 
 : {tbl-colwidths="[30,35,35]"}
 
-Source: @gfg2026
-
 # Types of Deep Learning
 
 ## Types of Deep Learning {.smaller}
 
 | Type | Purpose/Application |
 |---|---|
-| **Feedforward Neural Networks (FNNs)** | Classification and regression |
-| **Convolutional Neural Networks (CNNs)** | Processing image data |
-| **Recurrent Neural Networks (RNNs)** | Processing sequential data |
-| **Transformer models** | Processing sequential data |
-| **Mamba models** | Processing sequential data |
-| **Autoencoders** | Compressing (encoding) and reconstructing (decoding) input data |
-| **Generative adversarial networks (GANs)** | Creating new data that resembles training data |
-| **Graph neural networks (GNNs)** | Modeling complex relationships |
+| [**Feedforward neural networks (FNNs)**](#fnn) | Classification and regression |
+| [**Convolutional neural networks (CNNs)**](#cnn) | Processing image data |
+| [**Recurrent neural networks (RNNs)**](#rnn) | Processing sequential data |
+| [**Transformer models**](#transformer) | Processing sequential data |
+| [**Mamba models**](#mamba) | Processing sequential data |
+| [**Autoencoders**](#autoencoder) | Compressing (encoding) and reconstructing (decoding) input data |
+| [**Generative adversarial networks (GANs)**](#gan) | Creating new data that resembles training data |
+| [**Graph neural networks (GNNs)**](#gnn) | Modeling complex relationships |
 
 : {tbl-colwidths="[40,60]"}
 
-## Feedforward Neural Networks (FNNs) {.smaller}
+## [Feedforward Neural Networks (FNNs)](https://www.geeksforgeeks.org/deep-learning/feedforward-neural-network/){target="_blank"}{#fnn .smaller}
 
 :::: {.rows}
 
@@ -403,7 +402,7 @@ Source: @gfg2026
 | **Process** | Information flows in one direction directly from input layer to hidden layer(s) to output layer |
 | **Purpose** | General-purpose method, typically used for classification and regression |
 | **Example(s) of Application** | Predicting loan default |
-| **How it Differs** | Simplest type of deep learning; has no memory of previous inputs |
+| **How it Differs** | Simplest type of deep learning |
 | **Other Information** | Also known as *multilayer perceptron MLP* |
 
 :::
@@ -419,7 +418,7 @@ show_model("feedforward")
 
 ::::
 
-## Convolutional Neural Networks (CNNs) {.smaller}
+## [Convolutional Neural Networks (CNNs)](https://www.geeksforgeeks.org/machine-learning/introduction-convolution-neural-network/){target="_blank"}{#cnn .smaller}
 
 :::: {.rows}
 
@@ -446,7 +445,7 @@ show_model("cnn")
 
 ::::
 
-## Recurrent Neural Networks (RNNs) {.smaller}
+## [Recurrent Neural Networks (RNNs)](https://www.geeksforgeeks.org/machine-learning/introduction-to-recurrent-neural-network/){target="_blank"}{#rnn .smaller}
 
 :::: {.rows}
 
@@ -454,7 +453,7 @@ show_model("cnn")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | Reads a sequence one step at a time while running a memory of what it has seen up to that point; each step combines the new input with the existing memory |
+| **Process** | Reads a sequence one step at a time while running a memory of what it has seen up to that point |
 | **Purpose** | Handles sequential data |
 | **Example(s) of Application** | Speech recognition, forecasting time series (weather, stock prices) |
 | **How it Differs** | Earlier inputs influence later outputs |
@@ -473,7 +472,7 @@ show_model("rnn")
 
 ::::
 
-## Transformer Models {.smaller}
+## [Transformer Models](https://www.geeksforgeeks.org/machine-learning/getting-started-with-transformers/){target="_blank"} {#transformer .smaller}
 
 :::: {.rows}
 
@@ -500,7 +499,7 @@ show_model("transformer")
 
 ::::
 
-## Mamba Models {.smaller}
+## [Mamba Models](https://www.geeksforgeeks.org/artificial-intelligence/what-is-a-mamba-model/){target="_blank"}{#mamba .smaller}
 
 :::: {.rows}
 
@@ -527,7 +526,7 @@ show_model("mamba")
 
 ::::
 
-## Autoencoders {.smaller}
+## [Autoencoders](https://www.geeksforgeeks.org/machine-learning/auto-encoders/){target="_blank"}{#autoencoder .smaller}
 
 :::: {.rows}
 
@@ -535,7 +534,7 @@ show_model("mamba")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | The encoder half compresses the input into a summary and the decoder half tries to rebuild the original from the summary |
+| **Process** | *Encoder* half compresses the input into a summary, *decoder* half tries to rebuild the original from the summary |
 | **Purpose** | Learning the most important features of data without labels |
 | **Example(s) of Application** | Fraud and anomaly detection, removing noise from images, compressing data |
 | **How it Differs** | No labels, no "right answer" since the data itself is the intended output |
@@ -554,7 +553,7 @@ show_model("autoencoder")
 
 ::::
 
-## Generative Adversarial Networks (GANs) {.smaller}
+## [Generative Adversarial Networks (GANs)](https://www.geeksforgeeks.org/deep-learning/generative-adversarial-network-gan/){target="_blank"}{#gan .smaller}
 
 :::: {.rows}
 
@@ -562,7 +561,7 @@ show_model("autoencoder")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | The generator network creates fake data from random noise, the discriminator network tries to tell real data from fake data |
+| **Process** | *Generator* network creates fake data from random noise, *discriminator* network tries to tell real data from fake data |
 | **Purpose** | Generating new data |
 | **Example(s) of Application** | Creating synthetic training data, turning sketches into photos, deepfakes |
 | **How it Differs** | Creates new data rather than predicting labels |
@@ -581,7 +580,7 @@ show_model("gan")
 
 ::::
 
-## Graph Neural Networks (GNNs) {.smaller}
+## [Graph Neural Networks (GNNs)](https://www.geeksforgeeks.org/deep-learning/what-are-graph-neural-networks/){target="_blank"}{#gnn .smaller}
 
 :::: {.rows}
 
@@ -657,4 +656,7 @@ for ax, img, p, t in zip(axes.flat, X_test, preds, y_test):
 plt.show()
 ```
 
-## Sources
+## Sources {.smaller .scrollable}
+
+::: {#refs}
+:::
