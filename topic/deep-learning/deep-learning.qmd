@@ -313,7 +313,7 @@ draw_nn([3, 5, 5, 2], ["Input layer", "Hidden layer 1", "Hidden layer 2", "Outpu
 
 - Consists of a system of neurons (or **nodes**) that form connections
 - Each connection has a **weight** that determines input importance
-- Each node has a **bias** that determines the direction of the input
+- Each node has a **bias** that is added to the weighted input
 
 ## Brief History of Neural Networks
 
