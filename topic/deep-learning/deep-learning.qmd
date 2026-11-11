@@ -265,11 +265,9 @@ def overview(figsize=(16, 6.6)):
 
 ## About Me
 
-- **Education:** Dual-degree in Statistical Data Science and Economics, minor in History, University of Connecticut (graduating May 2028).
+- **Education:** Dual-degree in Statistical Data Science (concentration in Financial Analysis) and Economics, minor in History, University of Connecticut (graduating May 2028).
 - **Interests:** Sports analytics (association football/soccer), financial analysis, marketing analytics
 - **Why Deep Learning?** Understanding deep learning is crucial to understanding artificial intelligence, which is incredibly relevant in the world of data science and economics.
-
-# What Is Deep Learning?
 
 ## What Is Deep Learning?
 
@@ -277,9 +275,9 @@ def overview(figsize=(16, 6.6)):
 
 It is responsible for powering most forms of Artificial Intelligence.
 
-# Deep Learning versus Neural Networks
+## Deep Learning versus Neural Networks
 
-## What is a Neural Network? {.smaller}
+### What is a Neural Network? {.smaller}
 
 ```{python}
 #| echo: false
@@ -330,9 +328,9 @@ While there are a lot of overlaps and similarities, deep learning and neural net
 - Deep learning typically contains several layers more than neural networks
 - A deep learning model must have at least 4 layers to be considered *deep*
 
-# Deep Learning versus Machine Learning
+## Deep Learning versus Machine Learning
 
-## How Does Deep Learning Fit Into Machine Learning?
+### How Does Deep Learning Fit Into Machine Learning?
 
 ```{python}
 #| echo: false
@@ -373,8 +371,6 @@ plt.show()
 | **Interpretability** | Easier | Harder (considered a *black box*) |
 
 : {tbl-colwidths="[30,35,35]"}
-
-# Types of Deep Learning
 
 ## Types of Deep Learning {.smaller}
 
@@ -607,9 +603,7 @@ show_model("gnn")
 
 ::::
 
-# A Practical Application
-
-## Example: Reading Handwritten Digits
+## A Practical Application: Reading Handwritten Digits
 
 ```{python}
 #| echo: true
