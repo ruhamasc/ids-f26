@@ -372,7 +372,7 @@ plt.show()
 
 : {tbl-colwidths="[30,35,35]"}
 
-## Types of Deep Learning {.smaller}
+## Types of Deep Learning {#types .smaller}
 
 | Type | Purpose/Application |
 |---|---|
@@ -401,6 +401,8 @@ plt.show()
 | **How it Differs** | Simplest type of deep learning |
 | **Other Information** | Also known as *multilayer perceptron MLP* |
 
+[← Back](#types)
+
 :::
 
 ::: {.row width="50%" .v-center-container}
@@ -427,6 +429,8 @@ show_model("feedforward")
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
 | **How it Differs** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
 | **Other Information** | Pooling layers in the network shrink the image throughout the processs |
+
+[← Back](#types)
 
 :::
 
@@ -455,6 +459,8 @@ show_model("cnn")
 | **How it Differs** | Earlier inputs influence later outputs |
 | **Other Information** | Struggle to remember things from far back; tend to be slow |
 
+[← Back](#types)
+
 :::
 
 ::: {.row width="50%" .v-center-container}
@@ -481,6 +487,8 @@ show_model("rnn")
 | **Example(s) of Application** | Chatbots and large language models |
 | **How it Differs** | Much fater than RNNs, better at long-range connections |
 | **Other Information** | Tends to be costly |
+
+[← Back](#types)
 
 :::
 
@@ -509,6 +517,8 @@ show_model("transformer")
 | **How it Differs** | Cost grows linearly, trains faster, remembers better |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
 
+[← Back](#types)
+
 :::
 
 ::: {.row width="50%" .v-center-container}
@@ -535,6 +545,8 @@ show_model("mamba")
 | **Example(s) of Application** | Fraud and anomaly detection |
 | **How it Differs** | No "right answer" since the data itself is the intended output |
 | **Other Information** | *Variational encoders (VAEs)* can generate new data |
+
+[← Back](#types)
 
 :::
 
@@ -563,6 +575,8 @@ show_model("autoencoder")
 | **How it Differs** | Creates new data rather than predicting labels |
 | **Other Information** | Hard to train, typically unstable |
 
+[← Back](#types)
+
 :::
 
 ::: {.row width="50%" .v-center-container}
@@ -589,6 +603,8 @@ show_model("gan")
 | **Example(s) of Application** | Traffic and arrival-time predictions in map apps |
 | **How it Differs** | Handles any network shape |
 | **Other Information** | Tend to have fairly few layers |
+
+[← Back](#types)
 
 :::
 
