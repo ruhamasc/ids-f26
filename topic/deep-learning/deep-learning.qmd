@@ -605,7 +605,7 @@ output.
 ```{python}
 #| echo: false
 #| fig-align: center
-#| fig-alt: "Diagram of nested circles: A Deep Learning circle is nested within a Machine Learning circle which is nested wihtin an Artificial Intelligence circle."
+#| fig-alt: "Diagram of nested circles: A Deep Learning circle is nested within a Machine Learning circle which is nested within an Artificial Intelligence circle."
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
@@ -772,8 +772,8 @@ show_model("cnn")
 | **Process** | Filters across an image to identify local patterns, slowly identifying increasingly complex patterns |
 | **Purpose** | Handles grid-shaped data (specifically images) |
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
-| **How it Differs** | Uses the spacial structure of the data; the same filter is reused everywhere in the dataset |
-| **Other Information** | Pooling layers in the network shrink the image throughout the processs |
+| **How it Differs** | Uses the spatial structure of the data; the same filter is reused everywhere in the dataset |
+| **Other Information** | Pooling layers in the network shrink the image throughout the process |
 
 Source: [@gfg_cnn]
 
@@ -794,19 +794,18 @@ Source: [@gfg_cnn]
 
 **How It Works**
 
-1. **Filter:** Small grid of weights that slides across the image,
-2. At each position, it multiplies and sums the pixels it covers, producing a
-   **feature map**.
-3. Each layer learns multiple filters during training,
-4. **Pooling** layers shrink the feature maps.
-5. Recognized patterns become increasingly complex as the model moves through
-   the layers.
+1. Reads a sequence one element at a time
+2. Keeps a **hidden state**, a running memory: each new state combines the current input with the previous state
+3. The same weights are reused at every step
+4. Can produce an output at every step (e.g. the next word) or only at the end (e.g. whether a review is positive)
+5. Trained with **backpropagation through time**
+
 :::
 
 ::: {.fragment .fade-in-then-out fragment-index=1 style="width: 100%;"}
 ```{python}
 #| echo: false
-#| fig-alt: "Diagram of a RNN: the words 'The', 'cat', 'sata', 'down' are read one at a time, each feeding into a hidden state from h1-h4; each hideen state passes memory to the next and each produces an output of y1-y4."
+#| fig-alt: "Diagram of a RNN: the words 'The', 'cat', 'sat', 'down' are read one at a time, each feeding into a hidden state from h1-h4; each hidden state passes memory to the next and each produces an output of y1-y4."
 show_model("rnn")
 ```
 
@@ -845,7 +844,7 @@ Source: [@gfg_rnn]
 | **Process** | Processes the whole sequence at once, using positional encodings to keep track of word order |
 | **Purpose** | Handles sequential data (especially language) |
 | **Example(s) of Application** | Chatbots and large language models |
-| **How it Differs** | Much fater than RNNs, better at long-range connections |
+| **How it Differs** | Much faster than RNNs, better at long-range connections |
 | **Other Information** | Tends to be costly |
 
 Source: [@gfg_transformer]
@@ -858,7 +857,7 @@ Source: [@gfg_transformer]
 
 ```{python}
 #| echo: false
-#| fig-alt: "Diagramer of a Transformer model: in the sentence 'The cat sat on the mat', arrows of different thickness go from the word sat to every other word; the thickest go to 'cat' and 'mat', showing where the model pays the most attention."
+#| fig-alt: "Diagram of a Transformer model: in the sentence 'The cat sat on the mat', arrows of different thickness go from the word sat to every other word; the thickest go to 'cat' and 'mat', showing where the model pays the most attention."
 show_model("transformer")
 ```
 
@@ -880,7 +879,7 @@ show_model("transformer")
 | **Process** | Selectively moves through a sequences while keeping a running memory |
 | **Purpose** | Handles (very long) sequential data |
 | **Example(s) of Application** | DNA and genomics sequences, audio, long time series |
-| **How it Differs** | Cost grows linearly, trains faster, remembers better |
+| **How it Differs** | Cost tends to grow linearly, tends to train faster and remember better |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
 
 Source: [@gfg_mamba]
