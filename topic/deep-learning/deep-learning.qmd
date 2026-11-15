@@ -1188,6 +1188,14 @@ plt.show()
   depends on the data, interpretability/complexity needs, and the computing
   resources available
 
+## AI Use Disclosure:
+
+**Tool:** Anthropic, claude.ai
+
+**Used For:** Navigating how to use revealjs, suggesting and debugging code
+(mostly the worked examples and polishing the diagrams), and reviewing the final
+product for submission
+
 ## Sources {.smaller}
 
 ::: {#refs}
@@ -1197,11 +1205,3 @@ plt.show()
 
 ::: {#refs-continued .references .csl-bib-body .hanging-indent}
 :::
-
-## AI Use Disclosure:
-
-**Tool:** Anthropic, claude.ai
-
-**Used For:** Navigating how to use revealjs, suggesting and debugging code
-(mostly the worked examples and polishing the diagrams), and reviewing the final
-product for submission
