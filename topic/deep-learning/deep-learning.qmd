@@ -441,8 +441,7 @@ def show_model(name, figsize=(5.5, 3.3), title=False):
 ## About Me
 
 - **Education:** Dual-degree in Statistical Data Science (concentration in
-  Financial Analysis) and Economics, minor in History, University of Connecticut
-  (graduating May 2028).
+  Financial Analysis) and Economics, minor in History, (graduating May 2028).
 - **Interests:** Sports analytics (association football/soccer), financial
   analysis, marketing analytics
 - **Why Deep Learning?** Understanding deep learning is crucial to understanding
