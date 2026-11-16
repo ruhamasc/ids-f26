@@ -1,0 +1,392 @@
+---
+title: "Perfect Separation in Logistic Regression"
+subtitle: "Introduction to Data Science | Fall 2026"
+author: "Carter Morissette"
+format:
+  revealjs:
+    width: 1280
+    height: 720
+    slide-number: true
+    preview-links: auto
+    theme: default
+    incremental: false
+    fig-format: svg
+jupyter: python3
+bibliography: references.bib
+---
+
+## About me
+
+**Carter Morissette**, Statistical Data Science major and Economics minor
+at UConn (graduating May 2027)
+
+- **Experience:** research and data analyst at UConn's Industrial
+  Assessment Center, running energy audits; sports statistics internship
+  with UConn Baseball (Fall 2026)
+- **Why this topic:** I started with logistic regression, and
+  decided to study specifically where it breaks: perfect separation.
+  I plan to model NBA win probability for my final project, which is a
+  yes/no outcome, so I wanted to know how logistic regression can fail.
+
+## Motivation
+
+- Separation breaks the usual fitting method (maximum likelihood) and
+  the tests built on it.
+- It does not mean the predictor is useless. Here, the predictor gets
+  every outcome right.
+- Warning signs: huge coefficients, enormous standard errors, or a
+  convergence warning.
+- It tends to appear with small samples, rare outcomes, or a category
+  where every row has the same outcome.
+- So we need to know why it happens and how to fix it.
+
+## Main idea
+
+- Logistic regression predicts a yes/no outcome from numbers.
+- Example: hours studied predicts pass or fail.
+- It gives a probability, like "80% chance of passing".
+- Basics: [Chapter 9](https://statds.github.io/ids-book/09-modeling.html).
+
+## The model
+
+Logistic regression models the log-odds of an outcome:
+
+$$\log\frac{p}{1-p} = \beta_0 + \beta_1 x,$$
+
+where $p$ is the chance of passing and $x$ is hours studied.
+
+- $\beta_0$ is the intercept: the log-odds when $x = 0$.
+- One more hour changes the log-odds by $\beta_1$. It multiplies the
+  odds by $\exp(\beta_1)$.
+- Odds compare the chance of passing to the chance of failing.
+
+
+## What is perfect separation?
+
+- **Complete separation:** one cutoff splits the outcomes perfectly.
+  Everyone who studied over 5 hours passed. Everyone under 5 failed.
+    - The curve can always get steeper, so there is no best slope.
+- **Quasi-complete separation:** a split that is perfect for part of the
+  data, with the rest mixed.
+    - Example (made-up data): four study groups, A to D. Everyone in
+      group D passed, so D's coefficient has no finite best value.
+- Either way, no finite best estimate exists [@albert1984existence].
+
+**In plain English:** the model chases a perfect fit and never stops.
+
+
+## Worked example
+
+Simulated data: 40 students, and everyone above 5 hours passes. This is
+complete separation.
+
+```{python}
+#| echo: true
+import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(3255)
+hours = rng.uniform(0, 10, 40).round(2)
+df = pd.DataFrame({"hours": hours, "passed": (hours > 5).astype(int)})
+```
+
+Each row is one student: hours studied, and whether they passed.
+
+## The two groups
+
+```{python}
+#| echo: true
+df.groupby("passed")["hours"].agg(["count", "min", "max"])
+```
+
+Every student who failed (0) studied less than every student who
+passed (1).
+
+## What it looks like
+
+```{python}
+#| echo: false
+#| fig-cap: "Passing is fully determined by hours studied."
+#| fig-alt: "Scatter plot of hours studied against pass or fail, with a \
+#| dashed line separating the two groups."
+import matplotlib.pyplot as plt
+
+BLUE, ORANGE, MUTED = "#2a78d6", "#eb6834", "#898781"
+lo = df.loc[df["passed"] == 0, "hours"].max()
+hi = df.loc[df["passed"] == 1, "hours"].min()
+gap = (lo + hi) / 2
+
+fig, ax = plt.subplots(figsize=(8, 3))
+ax.scatter(df["hours"], df["passed"],
+           c=np.where(df["passed"] == 1, BLUE, ORANGE),
+           s=40, edgecolor="white", linewidth=0.8)
+ax.axvline(gap, color=MUTED, linestyle="--", linewidth=1)
+ax.text(gap + 0.1, 0.5, "no overlap: one cut\nsplits the groups",
+        color="#52514e", va="center")
+ax.set(xlabel="Hours studied", ylabel="Passed", yticks=[0, 1],
+       yticklabels=["No", "Yes"])
+ax.spines[["top", "right"]].set_visible(False)
+plt.show()
+```
+
+```{python}
+#| echo: false
+#| output: asis
+print(f"Any cutoff between {lo:.2f} and {hi:.2f} hours is a perfect "
+      "classifier.")
+```
+
+## Interpretation
+
+```{python}
+#| echo: true
+import warnings
+import statsmodels.api as sm
+
+X = sm.add_constant(df[["hours"]])
+with warnings.catch_warnings(record=True) as caught:
+    warnings.simplefilter("always")
+    fit = sm.Logit(df["passed"], X).fit(disp=False)
+```
+
+We record the warnings instead of hiding them. They are part of the
+lesson.
+
+## The output
+
+```{python}
+#| echo: false
+print(fit.summary().tables[1])
+print("Training accuracy:", ((fit.predict(X) > 0.5) == df["passed"]).mean())
+print("Converged:", fit.mle_retvals["converged"])
+for w in caught:
+    print(f"{w.category.__name__}: {w.message}")
+```
+
+**In plain English:** every answer is right, but the model never
+finished its math.
+
+## Reading the output
+
+```{python}
+#| echo: false
+#| output: asis
+b = fit.params["hours"]
+se = fit.bse["hours"]
+ci_lo, ci_hi = fit.conf_int().loc["hours"]
+p = fit.pvalues["hours"]
+cut = -fit.params["const"] / b
+mag = round(b / np.log(10))
+
+print(f"""
+- **Slope ({b:.1f}):** each extra hour would multiply the odds of
+  passing by about $10^{{{mag}}}$. Not believable.
+- **Std err ({se:,.0f}) and 95% interval ({ci_lo:,.0f} to {ci_hi:,.0f}):**
+  the usual Wald calculations are unreliable under separation.
+- **p = {p:.3f}:** this is not evidence that hours has no effect. The
+  Wald test breaks down here.
+- The optimizer stopped at {b:.1f}. That is not a finite best estimate.
+
+**In plain English:** any cutoff between {lo:.2f} and {hi:.2f} hours
+works, so the printed {cut:.1f} is arbitrary. Do not trust the cutoff,
+slope, interval, or p-value.
+""")
+```
+
+
+## Why it fails
+
+```{python}
+#| echo: false
+#| fig-cap: 'Left: the estimate keeps growing as more iterations are
+#| allowed. Right: the log-likelihood along the path with intercept
+#| $-b \times \mathrm{gap}$, not a profile likelihood.'
+#| fig-alt: "Left: the estimated slope keeps rising as more iterations \
+#| are allowed. Right: the log-likelihood rises toward zero as the \
+#| slope grows but never reaches it."
+iters = [3, 4, 6, 8, 10, 15, 25, 35]
+coefs = []
+for k in iters:
+    with warnings.catch_warnings():
+        # Non-convergence is expected here, so hide it in this loop only.
+        warnings.simplefilter("ignore")
+        res = sm.Logit(df["passed"], X).fit(maxiter=k, disp=False)
+    coefs.append(res.params["hours"])
+
+slopes = np.linspace(0.2, 30, 200)
+def loglik(b):
+    z = b * (df["hours"] - gap)
+    return np.sum(df["passed"] * z - np.logaddexp(0, z))
+ll = [loglik(b) for b in slopes]
+
+fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 3.4))
+a1.plot(iters, coefs, color=BLUE, linewidth=2, marker="o", markersize=5)
+a1.set(xlabel="Iterations allowed", ylabel="Estimated slope",
+       title="The estimate never settles")
+a2.plot(slopes, ll, color=BLUE, linewidth=2)
+a2.axhline(0, color=MUTED, linestyle="--", linewidth=1)
+a2.text(15, -2.5, "highest possible value (0)", color="#52514e", ha="center")
+a2.set(xlabel="Slope", ylabel="Log-likelihood",
+       title="The likelihood only keeps climbing")
+for a in (a1, a2):
+    a.spines[["top", "right"]].set_visible(False)
+fig.tight_layout()
+plt.show()
+```
+
+**In plain English:** the model's "best" slope keeps growing, so the
+number it prints just depends on when it gave up.
+
+## Spotting separation
+
+- Warnings: a `ConvergenceWarning`, or `Converged: False`.
+- Huge coefficients, standard errors in the thousands, p-values near 1.
+- Perfect (or nearly perfect) accuracy on the training data.
+- For a category, a zero cell in `pd.crosstab(predictor, outcome)`.
+
+
+## Fixes
+
+**Fix 1: add a penalty.** It puts a price on steep curves.
+
+::: {.columns}
+::: {.column width="42%"}
+- scikit-learn's default is a ridge (L2) penalty on the slope.
+- `C` is the inverse of the penalty strength. **Smaller `C` means a
+  flatter curve.**
+- Pick `C` by validation when predicting. The cost: the slope is pulled
+  toward zero.
+:::
+::: {.column width="58%"}
+```{python}
+#| echo: false
+#| fig-alt: "Chance of passing against hours studied for four penalty \
+#| strengths; the curve gets steeper as the penalty weakens."
+from sklearn.linear_model import LogisticRegression
+
+grid = pd.DataFrame({"hours": np.linspace(0, 10, 200)})
+shades = {0.1: "#6da7ec", 1: "#2a78d6", 100: "#184f95", np.inf: "#0d366b"}
+with plt.rc_context({"font.size": 13}):
+    fig, ax = plt.subplots(figsize=(9.4, 4.4))
+    ax.scatter(df["hours"], df["passed"], c=MUTED, s=30, alpha=0.7)
+    for c, col in shades.items():
+        m = LogisticRegression(C=c, max_iter=10_000)
+        m.fit(df[["hours"]], df["passed"])
+        slope = m.coef_[0][0]
+        if np.isinf(c):
+            label = "no penalty: slope keeps growing"
+        elif c == 1:
+            label = f"C = 1 (default): slope {slope:.1f}"
+        else:
+            label = f"C = {c:g}: slope {slope:.1f}"
+        ax.plot(grid["hours"], m.predict_proba(grid)[:, 1],
+                color=col, linewidth=2.5, label=label)
+    ax.legend(frameon=False, loc="lower right")
+    ax.set(xlabel="Hours studied", ylabel="Chance of passing")
+    ax.spines[["top", "right"]].set_visible(False)
+    plt.show()
+```
+:::
+:::
+
+## Firth's method
+
+Ridge and Firth both penalize the fitting objective, differently.
+
+| | Ridge penalty (`C`) | Firth's penalty |
+|:--------|:---------------|:-------------------|
+| Adds | Coefficient penalty | Information-based bias adjustment |
+| Strength | You choose `C` | No `C` to choose |
+| Goal | Better predictions | Less bias, finite estimates |
+| Intervals | Not shown here | Profile penalized-likelihood |
+
+- @firth1993bias: a penalty that reduces bias.
+- @heinze2002solution: finite estimates, profile intervals.
+- Python: `firthmodels` (not in our shared environment, so no demo).
+
+
+## Merge categories
+
+**Fix 2: merge sparse categories.** Group D had no failures.
+
+```{python}
+#| echo: false
+#| output: asis
+import statsmodels.formula.api as smf
+
+g = np.repeat(list("ABCD"), 15)
+y = np.concatenate([[1] * 3 + [0] * 12, [1] * 6 + [0] * 9,
+                    [1] * 10 + [0] * 5, [1] * 15])
+d = pd.DataFrame({"group": g, "passed": y})
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    m1 = smf.logit("passed ~ C(group)", data=d).fit(disp=False)
+d["merged"] = d["group"].replace({"C": "C or D", "D": "C or D"})
+m2 = smf.logit("passed ~ C(merged)", data=d).fit(disp=False)
+c1, s1 = m1.params["C(group)[T.D]"], m1.bse["C(group)[T.D]"]
+c2, s2 = m2.params["C(merged)[T.C or D]"], m2.bse["C(merged)[T.C or D]"]
+n = pd.crosstab(d["passed"], d["group"])
+
+
+def row(k):
+    return " | ".join(str(n.loc[k, g]) for g in "ABCD")
+
+
+print(f"""
+| Study group | A | B | C | D |
+|:-------|--:|--:|--:|--:|
+| Passed | {row(1)} |
+| Failed | {row(0)} |
+
+- **Problem:** D's effect vs group A is {c1:.1f}, std err {s1:,.0f}.
+- **Fix:** pool C and D. The effect becomes {c2:.1f}, std err {s2:.1f}.
+- **Caution:** this compares C and D together with A, not D with A. It is
+  not a corrected estimate of the same effect. Merge for real reasons,
+  not just to remove a zero.
+""")
+```
+
+## Limitations
+
+- A penalty pulls the slope toward zero, and the answer depends on the
+  `C` you pick.
+- After a penalty, the usual std errors and p-values no longer mean
+  what they normally do.
+- Merging groups changes the question you answer. Pick groups that make
+  sense in real life, not ones that just fix the numbers.
+- With small samples, separation can happen by chance.
+
+**In plain English:** every fix changes the answer a little, so say
+what you changed and why.
+
+## Takeaways
+
+1. Separation breaks estimation and inference, not necessarily
+   prediction. Huge std errors and p-values near 1 are warning signs.
+2. Under separation, the printed slope is just where the optimizer
+   stopped. Do not interpret it.
+3. Fix it with a penalty, Firth's method, or merged categories, and say
+   what the fix costs.
+
+**In plain English:** too perfect plus huge uncertainty means the usual
+estimates and tests are broken. Fix it, and say what the fix cost.
+
+## AI-use disclosure {.smaller}
+
+- **Tool:** Claude (Anthropic).
+- **Assistance:** planning slide structure, improving slide wording,
+  debugging the Python code and figures, pre-submission review.
+- **Responsibility:** I ran the code, checked the output, interpreted it
+  and take responsibility for the final content and citations.
+
+## References {.smaller}
+
+- Data: both examples are simulated, not real. Hours studied is built on
+  the Worked example slide, and the study groups are built in the code
+  behind the Merge categories slide.
+- [Chapter 9, Statistical Models](https://statds.github.io/ids-book/09-modeling.html)
+- [statsmodels Logit](https://www.statsmodels.org/stable/generated/statsmodels.discrete.discrete_model.Logit.html)
+- [scikit-learn LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
+
+::: {#refs}
+:::

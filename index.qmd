@@ -26,8 +26,10 @@ details.
 ## Collaborative Notes
 
 The Fall 2026 collaborative notes supplement the instructor-authored
-*Introduction to Data Science* book. They give students practice explaining
-data-science concepts and working through a Git and GitHub review process.
+[Introduction to Data Science book](https://statds.github.io/ids-book). They
+give students a real opportunity to contribute to a public resource for future
+readers and to practice the contribution and review process used in open-source
+projects.
 
 The notes are maintained in the
 [`ids-f26` repository](https://github.com/statds/ids-f26). Students contribute
@@ -69,6 +71,12 @@ git clone https://github.com/statds/ids-f26.git
 cd ids-f26
 ```
 
+The book's `requirements.txt` is the single source for course package versions.
+This repository's `requirements.txt` includes `../ids-book/requirements.txt`
+for the side-by-side checkout layout above. Follow the
+[book setup instructions](https://statds.github.io/ids-book/#building-the-book)
+when creating the shared Python 3.12 environment for the first time.
+
 Use the course Python environment that you already chose while working through
 the instructor book. Do **not** create another virtual environment or install
 packages inside `ids-f26`. From the `ids-f26` repository, set
@@ -83,6 +91,12 @@ source "$ENVIRONMENT_DIRECTORY/bin/activate"
 # Windows with Git Bash
 source "$ENVIRONMENT_DIRECTORY/Scripts/activate"
 ```
+
+To refresh packages after an approved dependency change, activate that
+environment and run `make install` from `ids-book`. If your checkouts are
+not side by side, use the actual book directory; the relative include above
+assumes the documented layout. Propose new dependencies to the instructor
+for inclusion in the book's requirements rather than adding package pins here.
 
 Confirm that the selected interpreter is the course environment before
 rendering:
@@ -146,6 +160,9 @@ last name and use a nested Markdown list, as in the instructor's example:
   - Share experience completing real-world data-science projects.
   - Help students develop reproducible and collaborative working habits.
 - Anikeev, Katerina
+  - Learn how to better use my computer and navigate work through the command line
+  - Practice skills useful for research and Data Analysis in Political Science
+  - Practice my existing skills and learn how to better code in Python.
 - Bucco, Sadie
   - Become proficient using GitHub and git commands
   - Work on writing code that is clear and reproducible
@@ -202,6 +219,11 @@ last name and use a nested Markdown list, as in the instructor's example:
 
 - Nair, Pardhip
 - Noe, Amanda
+  - I want to become more proficient in keeping an organized workflow on 
+  GitHub.
+  - I want to become more confident in my python coding skills.
+  - I want to bolster my understanding of technical data science and computer 
+  terms.
 - Ong, Enrico
   - Build fluency with the command line for everyday data-science tasks.
   - Practice core Git operations: cloning, pushing, and pulling changes.
@@ -230,15 +252,46 @@ or include private information.
 
 ### Midterm
 
-The midterm format, dates, and deliverables will be added after they are
-finalized.
+The [midterm project](midterm/project.qmd) uses hourly PM2.5 measurements to
+study air quality before and after congestion pricing. Submit completed work
+through Classroom 50.
 
 ### Final Project
 
 Begin considering final-project questions early in the semester. A suitable
 project starts with a meaningful question, uses data appropriate to that
-question, and communicates both findings and limitations. Potential sources of
-project ideas include:
+question, and communicates both findings and limitations.
+
+#### Proposal Consultation
+
+Use the 15-minute consultation to clarify the project and identify the next
+steps. Be prepared to discuss these questions:
+
+1. **Scientific question (2 min):** What do you want to learn, and why should
+   someone care about the answer?
+2. **Scope (1 min):** What population, place, time period, or phenomenon will
+   you study?
+3. **Existing work (2 min):** What have other researchers found that is most
+   relevant, and what gap or next question does your project address?
+4. **Data (2 min):** What are the observational units and outcome? Where will
+   the data come from, which key variables are available, and what might be
+   missing or poorly measured?
+5. **Statistical formulation (2 min):** What quantity or relationship will you
+   estimate? Which predictors or groups will you compare, and what role does
+   each play?
+6. **Methods (2 min):** What analysis will answer the question, and why is it
+   suitable for the outcome and data? What plot or summary will you examine
+   first?
+7. **Assumptions and limitations (2 min):** What must be true for your
+   interpretation to hold? What could bias the result, and what conclusion
+   would the data not support?
+8. **Story and deliverable (2 min):** What might your main figure or table
+   show? If the result is null or opposite to what you expect, what will the
+   takeaway be?
+
+End by identifying the biggest unresolved decision and a concrete next step.
+
+Potential sources of project ideas include:
 
 - [ASA Data Challenge Expo](https://community.amstat.org/dataexpo/home)
 - [Kaggle](https://www.kaggle.com/)
@@ -412,29 +465,30 @@ accepted.
 | Date | Presenter | Topic |
 |---|---|---|
 | 09/28 | Liu, Ethan | [topic] |
-| 09/30 | Noe, Amanda | [topic] |
-| 10/05 | Anikeev, Katerina | [topic] |
-| 10/07 | Chervonny, Erik | [topic] |
-| 10/12 | Mansur, Mahiba | [topic] |
-| 10/14 | Ong, Enrico | [topic] |
-| 10/19 | — | Midterm-project work; no topic presentations |
-| 10/21 | — | Midterm-project work; no topic presentations |
+| 09/30 | Noe, Amanda | Accessing U.S. Census Data |
+| 10/05 | Anikeev, Katerina | Visualizing Spatial Data |
+| 10/07 | Chervonny, Erik | Grammar of Graphics (ggplot) |
+| 10/12 | Mansur, Mahiba | Decision Trees |
+| 10/14 | Ong, Enrico | Data Manipulation with Pandas |
+| 10/19 | — | Midterm-project week; no topic presentations |
+| 10/21 | — | Midterm-project week; no topic presentations |
 | 10/26 | Fontana, Adam | K-Means Clustering |
-| 10/28 | Wang, Chaoyang | [topic] |
-| 11/02 | Bucco, Sadie | [topic] |
-| 11/04 | Tria, Nicholas | [topic] |
-| 11/04 | Parkins, Jack | [topic] |
-| 11/09 | Chok, Isaac | [topic] |
-| 11/09 | Horan, Elizabeth | [topic] |
+| 10/28 | Wang, Chaoyang | Neural Network |
+| 10/28 | Bucco, Sadie | Random Forests |
+| 11/02 | -- | No class in exchange of midterm-project time |
+| 11/04 | Tria, Nicholas | Naive Bayes |
+| 11/04 | Chok, Isaac | Principal Component Analysis (PCA) |
+| 11/09 | Parkins, Jack | LLM Agents |
+| 11/09 | Horan, Elizabeth | Support vector machines |
 | 11/11 | Distefano, Cristian | [topic] |
 | 11/11 | Nair, Pardhip | [topic] |
 | 11/11 | Morissette, Carter | [topic] |
-| 11/16 | Maras, Ruveyda | [topic] |
-| 11/16 | Wang, Leo | [topic] |
+| 11/16 | Maras, Ruveyda | False-discovery-rate control |
+| 11/16 | Wang, Leo | Agent Skills for Data Science |
 | 11/16 | Choudhury, Ruhama | Deep Learning |
-| 11/18 | Hartman, Mikaela | [topic] |
+| 11/18 | Hartman, Mikaela | Multidimensional Scaling |
 | 11/18 | Kiani, Ismail | [topic] |
-| 11/18 | Kelly, Daniel | [topic] |
+| 11/18 | Kelly, Daniel | Multiple Imputation for Missing Data |
 
 ### Final Project Presentation Schedule
 
@@ -453,7 +507,7 @@ chapter collects links to the rendered decks.
 | 12/02 | Mansur, Mahiba | [project] |
 | 12/02 | Ong, Enrico | [project] |
 | 12/02 | Chok, Isaac | [project] |
-| 12/02 | Wang, Chaoyang | [project] |
+| 12/02 |  | [project] |
 | 12/07 | Bucco, Sadie | [project] |
 | 12/07 | Tria, Nicholas | [project] |
 | 12/07 | Parkins, Jack | [project] |
@@ -462,12 +516,12 @@ chapter collects links to the rendered decks.
 | 12/09 | Distefano, Cristian | [project] |
 | 12/09 | Nair, Pardhip | [project] |
 | 12/09 | Morissette, Carter | [project] |
-| [exam-period date] | Maras, Ruveyda | [project] |
-| [exam-period date] | Wang, Leo | [project] |
-| [exam-period date] | Choudhury, Ruhama | [project] |
-| [exam-period date] | Hartman, Mikaela | [project] |
-| [exam-period date] | Kiani, Ismail | [project] |
-| [exam-period date] | Kelly, Daniel | [project] |
+| 12/19 (8:00-10:00) | Maras, Ruveyda | [project] |
+| 12/19 (8:00-10:00) | Wang, Leo | [project] |
+| 12/19 (8:00-10:00) | Choudhury, Ruhama | [project] |
+| 12/19 (8:00-10:00) | Hartman, Mikaela | [project] |
+| 12/19 (8:00-10:00) | Kiani, Ismail | [project] |
+| 12/19 (8:00-10:00) | Kelly, Daniel | [project] |
 
 ## Contributing to the Collaborative Notes
 
@@ -500,7 +554,7 @@ Before requesting review, check that the contribution:
 - uses BibTeX for scholarly references;
 - avoids unnecessary external files and large data files;
 - uses only images that may legally be redistributed;
-- records any new Python dependencies in the environment specification; and
+- requests approval for new Python dependencies in `ids-book/requirements.txt`;
 - renders successfully on the contributor's computer.
 
 Pull requests contain source files, not rendered output. After a pull request
@@ -542,8 +596,27 @@ Fall 2026 assignment requirements are:
 4. Preserve the complete branch history. Record the branch name, commit
    hashes and messages, and concise command results in the assignment source
    or wherever the assignment specifies.
-5. Push the branch and render the assignment before submitting the PDF through
-   the designated course workflow.
+5. Before submission, activate the same Python virtual environment that
+   successfully renders the IDS-F26 class notes. Do not create a separate
+   homework environment or install packages into a different interpreter.
+   From the assignment repository, verify the active interpreter and render
+   the source file:
+
+   ```bash
+   python -c "import sys; print(sys.executable); print(sys.version)"
+   quarto render your-homework.qmd
+   ```
+
+   Record the interpreter path, Python version, render command, and successful
+   result in the assignment source or required evidence. If the work needs a
+   package unavailable in the class-notes environment, ask the instructor
+   before adding a dependency. The grader will render the submitted source
+   with an automated script in that shared environment, so matching the
+   environment is part of the reproducibility check.
+6. Push the branch and submit the `.qmd` source plus any required input files
+   through the designated course workflow. A PDF is no longer required for
+   submission; the grader will render the source. Do not submit generated
+   output unless an assignment explicitly requests it.
 
 The ten-commit requirement applies to each assignment repository, not to the
 semester notes repository as a whole. Graded assignments remain private in

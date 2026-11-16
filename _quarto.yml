@@ -9,10 +9,20 @@ book:
   title: "Introduction to Data Science"
   subtitle: "STAT 3255/5255 @ UConn, Fall 2026"
   author:
-    - name: "[Jun Yan](https://statcomp.org) and Students in Fall 2026"
+    - name: Jun Yan
+      url: https://statcomp.org
+    - name: Erik Chervonny
+    - name: Mahiba Mansur
+    - name: Carter Morissette
+    - name: Amanda Noe
+    - name: Enrico Ong
+    - name: Jack Parkins
+    - name: Chaoyang Wang
+    - name: Leo Wang
   date: today
   chapters:
     - index.qmd
+    - midterm/project.qmd
     - chapters/data-acquisition.qmd
     - chapters/data-wrangling-visualization.qmd
     - chapters/statistical-modeling.qmd
