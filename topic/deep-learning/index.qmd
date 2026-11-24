@@ -294,52 +294,36 @@ def draw_transformer(ax):
 
 def draw_mamba(ax):
     _setup(ax)
-    words = ["The", "um", "cat", "uh", "sat", "down"]
-    keep = [True, False, True, False, True, True]
+    words = ["The", "cat", "sat", "on", "the", "mat"]
+    strength = [0.6, 1.0, 0.8, 0.25, 0.2, 0.9]
     xs = [1 + i * 1.6 for i in range(len(words))]
-    for x, w, k in zip(xs, words, keep):
-        _box(
-            ax,
-            x,
-            1.2,
-            1.2,
-            0.7,
-            BLUE if k else LIGHT,
-            w,
-            tc="white" if k else "dimgray",
-        )
-        _arrow(
-            ax,
-            (x, 1.6),
-            (x, 2.8),
-            color="black" if k else GRAY,
-            ls="-" if k else "--",
-            lw=1.4 if k else 1,
-        )
-        ax.text(
-            x + 0.25,
-            2.15,
-            "keep" if k else "skip",
-            fontsize=7,
-            color="black" if k else GRAY,
-        )
-        _box(ax, x, 3.2, 0.75, 0.75, ORANGE)
+    for i, (x, w, s) in enumerate(zip(xs, words, strength), start=1):
+        _box(ax, x, 1.2, 1.2, 0.7, BLUE, w)
+        _arrow(ax, (x, 1.6), (x, 2.78), color=PURPLE, lw=0.8 + 3.5 * s)
+        _box(ax, x, 3.2, 0.8, 0.75, ORANGE, f"h{i}")
     for a, b in zip(xs[:-1], xs[1:]):
-        _arrow(ax, (a + 0.42, 3.2), (b - 0.42, 3.2), color=ORANGE, lw=2.2)
+        _arrow(ax, (a + 0.45, 3.2), (b - 0.45, 3.2), color=ORANGE, lw=2.2)
     ax.text(
         5,
         4.0,
-        "small running memory (state)",
+        "fixed-size state, updated once per input",
         ha="center",
         fontsize=9,
         color=ORANGE,
     )
     ax.text(
         5,
-        5.2,
-        "Selective: chooses what to remember,\none pass, cost grows linearly",
+        5.1,
+        "Selective: each input sets how much\nthe state changes at that step",
         ha="center",
         fontsize=9,
+    )
+    ax.text(
+        5,
+        0.35,
+        "arrow width = update strength (illustrative values)",
+        ha="center",
+        fontsize=8,
     )
 
 
@@ -451,10 +435,10 @@ def show_model(name, figsize=(5.5, 3.3), title=False):
 ## What Is Deep Learning?
 
 **Deep Learning** is a subset of machine learning driven by mutilayered neural
-networks inspired by the structure of the human brain. [@ibm2025]
+networks inspired by the structure of the human brain.
 
 It is responsible for powering many forms of modern artificial intelligence,
-such as image recognition, speech recognition, and chatbots.
+such as image recognition, speech recognition, and chatbots [@bergmann2025deep].
 
 ## What Is a Neural Network?
 
@@ -462,15 +446,13 @@ such as image recognition, speech recognition, and chatbots.
 
 ::: {.fragment .fade-out fragment-index=1 style="width: 100%;"}
 **Neural network:** a model that takes input data, recognizes patterns, then
-produces an output
+produces an output [@james2023introduction].
 
 - Consists of **neurons** (or **nodes**), arranged in layers that form
   connections
 - Each connection has a **weight** that scales how much its input contributes
 - Each node adds a **bias** that constantly offsets the weighted input
 - Weights and biases are adjusted during training to improve the model
-
-[@islp2023]
 :::
 
 ::: {.fragment .fade-in-then-out fragment-index=1 style="width: 100%;"}
@@ -528,10 +510,17 @@ draw_nn(
 :::: {.r-stack}
 
 ::: {.fragment .fade-out fragment-index=1 style="width: 100%;"}
+For a neuron with three inputs:
 
-- **Weights** scale each input; the **bias** shifts the total up or down
-- The **activation function** adds non-linearity, so stacked layers can learn
-  complex patterns
+- $x_1, x_2, x_3$ are the **inputs** (for example, pixel values)
+- $w_1, w_2, w_3$ are the **weights**, which scale each input
+- $b$ is the **bias**, which shifts the total up or down
+- The neuron computes $z = w_1 x_1 + w_2 x_2 + w_3 x_3 + b$, then outputs $a =
+  f(z)$
+- $f$ is the **activation function**; it adds nonlinearity, so stacked layers
+  can learn complex patterns [@goodfellow2016deep]
+   - **ReLU** is a common choice: $f(z) = \max(0, z)$ keeps positive values and
+  sets negative values to 0
 :::
 
 ::: {.fragment .fade-in-then-out fragment-index=1 style="width: 100%;"}
@@ -578,22 +567,23 @@ draw_neuron()
 
 ## Brief History of Neural Networks
 
-- **Late 1980s:** Popularized before other methods/models (e.g. SVMs, boosting,
-  random forests) were developed
-- **2000s:** New methods and models outperformed and were thus preferred over
-  neural networks
-- **2010s:** Repopularized after being redeveloped into *deep learning*
+Neural networks have gone in and out of favor [@james2023introduction]:
 
-[@islp2023]
+- **Late 1980s:** Neural networks gained popularity
+- **2000s:** Methods such as SVMs, boosting, and random forests often performed
+  better, and neural networks fell out of favor
+- **2010s:** Neural networks returned as *deep learning*, helped by much larger
+  training datasets
 
 ## Deep Learning and Neural Networks
 
 **Deep** means the network stacks multiple hidden layers between input and
-output.
+output [@goodfellow2016deep].
 
-- Describes models that learn through several layers of representation
-- Each layer builds on the one before it
-- **Deep learning** is the field of training these multi-layered networks, along
+- There is no fixed number of layers that makes a network "deep"
+- Each layer builds on the one before it, learning several levels of
+  representation
+- **Deep learning** is the field of training these multilayered networks, along
   with the architectures and techniques that make it work
 
 ## How Does Deep Learning Fit Into Machine Learning?
@@ -644,7 +634,8 @@ plt.show()
   human intelligence
 - **Machine learning:** AI that learns patterns from data instead of following
   hand-written rules
-- **Deep learning:** machine learning with multi-layered neural networks
+- **Deep learning:** machine learning with multilayered neural networks
+  [@bergmann2025deep]
 :::
 
 ::::
@@ -663,8 +654,6 @@ plt.show()
 : *Note:* Describes general tendencies, not strict rules
   {tbl-colwidths="[22,39,39]"}
 
-[@gfg2026; @ibm2025]
-
 ## Types of Deep Learning {#types .smaller}
 
 | Type | Purpose/Application |
@@ -673,10 +662,10 @@ plt.show()
 | [**Convolutional neural networks (CNNs)**](#cnn) | Processing image/grid-shaped data |
 | [**Recurrent neural networks (RNNs)**](#rnn) | Processing sequential data: one step at a time |
 | [**Transformer models**](#transformer) | Processing sequential data: using attention |
-| [**Mamba models**](#mamba) | Processing sequential data: using longer data |
+| [**Mamba models**](#mamba) | Processing longer sequential data |
 | [**Autoencoders**](#autoencoder) | Compressing (encoding) and reconstructing (decoding) input data |
-| [**Generative adversarial networks (GANs)**](#gan) | Creating new data that resembles training data |
-| [**Graph neural networks (GNNs)**](#gnn) | Data defined by complex relationships (*networks*) |
+| [**Generative adversarial networks (GANs)**](#gan) | Creating new data that resembles the training data |
+| [**Graph neural networks (GNNs)**](#gnn) | Data defined by relationships (*networks*) |
 
 : {tbl-colwidths="[40,60]"}
 
@@ -725,8 +714,6 @@ show_model("feedforward")
 
 : {tbl-colwidths="[25,75]"}
 
-Source: [@gfg_fnn]
-
 [← Back](#types)
 
 :::
@@ -744,13 +731,15 @@ Source: [@gfg_fnn]
 
 **How It Works**
 
-1. **Filter:** Small grid of weights that slides across the image,
+1. **Filter:** a small grid of weights that slides across the image
 2. At each position, it multiplies and sums the pixels it covers, producing a
-   **feature map**.
-3. Each layer learns multiple filters during training,
-4. **Pooling** layers shrink the feature maps.
-5. Recognized patterns become increasingly complex as the model moves through
-   the layers.
+   **feature map**
+3. The same filter is reused at every location in the image (**weight
+   sharing**)
+4. Each layer learns many filters during training
+5. **Pooling** layers shrink the feature maps
+6. Patterns become more complex in later layers: edges, then shapes, then
+   objects
 
 :::
 
@@ -768,13 +757,11 @@ show_model("cnn")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | Filters across an image to identify local patterns, slowly identifying increasingly complex patterns |
-| **Purpose** | Handles grid-shaped data (specifically images) |
+| **Process** | Filters scan an image for local patterns; later layers combine them into increasingly complex patterns |
+| **Purpose** | Handles grid-shaped data (especially images) |
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
-| **How it Differs** | Uses the spatial structure of the data; the same filter is reused everywhere in the dataset |
-| **Other Information** | Pooling layers in the network shrink the image throughout the process |
-
-Source: [@gfg_cnn]
+| **How it Differs** | Each neuron connects only to a small local patch and each filter is reused acrosss all spatial locations in the image |
+| **Other Information** | Pooling layers shrink the feature maps as the image moves through the network |
 
 [← Back](#types)
 
@@ -793,11 +780,18 @@ Source: [@gfg_cnn]
 
 **How It Works**
 
-1. Reads a sequence one element at a time
-2. Keeps a **hidden state**, a running memory: each new state combines the current input with the previous state
-3. The same weights are reused at every step
-4. Can produce an output at every step (e.g. the next word) or only at the end (e.g. whether a review is positive)
-5. Trained with **backpropagation through time**
+1. Reads a sequence one element at a time; $x_t$ is the input at step $t$ (for
+   example, a word)
+2. Keeps a **hidden state** $h_t$, a running memory of what it has read so far:
+   $h_t = \tanh(W h_{t-1} + U x_t + b)$
+3. $W$ weights the previous state, $U$ weights the new input, and $b$ is a
+   bias;
+   the same $W$, $U$, and $b$ are reused at every step, and $\tanh$ keeps
+values
+   between $-1$ and $1$
+4. Can give an output $y_t$ at every step (for example, the next word) or only
+   at the end (for example, whether a review is positive)
+5. Trained with **backpropagation through time** [@goodfellow2016deep]
 
 :::
 
@@ -819,9 +813,7 @@ show_model("rnn")
 | **Purpose** | Handles sequential data |
 | **Example(s) of Application** | Speech recognition, forecasting time series (weather, stock prices) |
 | **How it Differs** | Earlier inputs influence later outputs |
-| **Other Information** | Struggle to remember things from far back; tend to be slow |
-
-Source: [@gfg_rnn]
+| **Other Information** | Basic RNNs can struggle to learn long-range dependencies; tend to be slow |
 
 [← Back](#types)
 
@@ -840,13 +832,12 @@ Source: [@gfg_rnn]
 
 | Feature | Explanation |
 |---|---|
-| **Process** | Processes the whole sequence at once, using positional encodings to keep track of word order |
+| **Process** | Self-attention let each position weigh every other position; positional encodings record word order |
 | **Purpose** | Handles sequential data (especially language) |
 | **Example(s) of Application** | Chatbots and large language models |
-| **How it Differs** | Much faster than RNNs, better at long-range connections |
-| **Other Information** | Tends to be costly |
+| **How it Differs** | During training, all positions of a known sequence can be processed in parallel; when generating text, the model still produces one token at a time |
+| **Other Information** | Attention cost grows with the square of the sequence length, so speed depends on sequence length and hardware |
 
-Source: [@gfg_transformer]
 
 [← Back](#types)
 
@@ -875,13 +866,11 @@ show_model("transformer")
 
 | Feature | Explanation |
 |---|---|
-| **Process** | Selectively moves through a sequences while keeping a running memory |
-| **Purpose** | Handles (very long) sequential data |
+| **Process** | A *selective state space model*: keeps a fixed-size hidden state and updates it once per input; the update depends on the current input, so each input controls how much the state changes |
+| **Purpose** | Handles long sequential data |
 | **Example(s) of Application** | DNA and genomics sequences, audio, long time series |
 | **How it Differs** | Cost tends to grow linearly, tends to train faster and remember better |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
-
-Source: [@gfg_mamba]
 
 [← Back](#types)
 
@@ -913,10 +902,8 @@ show_model("mamba")
 | **Process** | *Encoder* compresses input into a summary, *decoder* tries to rebuild the original from the summary |
 | **Purpose** | Learning the most important features of data without labels |
 | **Example(s) of Application** | Fraud and anomaly detection |
-| **How it Differs** | No "right answer" since the data itself is the intended output |
+| **How it Differs** | Needs no labels: the target is a reconstruction of the input itself, and the loss measures how far the reconstruction is from the input |
 | **Other Information** | *Variational autoencoders (VAEs)* can generate new data |
-
-Source: [@gfg_autoencoder]
 
 [← Back](#types)
 
@@ -951,8 +938,6 @@ show_model("autoencoder")
 | **How it Differs** | Creates new data rather than predicting labels |
 | **Other Information** | Hard to train, typically unstable |
 
-Source: [@gfg_gan]
-
 [← Back](#types)
 
 :::
@@ -986,8 +971,6 @@ show_model("gan")
 | **How it Differs** | Handles any network shape |
 | **Other Information** | Tend to have fairly few layers |
 
-Source: [@gfg_gnn]
-
 [← Back](#types)
 
 :::
@@ -1004,10 +987,11 @@ show_model("gnn")
 
 ::::
 
-## A Practical Application: Reading Handwritten Digits {.smaller}
+## Example: Reading Handwritten Digits {.smaller}
 
 ```{python}
 #| echo: true
+#| fig-alt: "The first ten images in the digits dataset: handwritten digits 0-9, each titled with its true digit."
 import numpy as np
 from sklearn.datasets import load_digits
 
@@ -1020,13 +1004,12 @@ for ax, img, label in zip(axes, digits.images, digits.target):
 plt.show()
 ```
 
-Using **scikit-learn's** built-in *digits dataset* (contains 1,797 images of
-handwritten digits)
+Using **scikit-learn's** built-in *digits dataset*, which contains 1,797 images of handwritten digits [@scikitlearn2026digits].
 
-- Each digit is represented by an 8x8 = 64-pixel image
-- **Goal:** predict which of the digits each image represents
+- Each digit is represented by an 8x8 = 64-pixel image, with gray levels from 0 to 16
+- **Goal:** predict which digit (0–9) each image shows
 
-## Preparing the Data
+## Preparing the Data {.smaller}
 
 ```{python}
 #| echo: true
@@ -1043,26 +1026,28 @@ print("Training:", X_train.shape, " Test:", X_test.shape)
 
 - **Pixel scaling:** every input is rescaled from 0-16 to 0-1
    - Neural networks train more reliably when inputs are small and similarly
-     scaled
+     scaled [@scikitlearn2026neuralnetworks]
 - **Train/Test split:** the model trains on 75% (1,347) of the images and is
   tested on the other 25% (450)
-- `random_state`: random split is fixed
+- `random_state`: the random split is fixed, so the results are reproducible
 
 ## The Network {.smaller}
 
 :::: {.columns}
 
-::: {.column width="45%"}
+::: {.column width="50%"}
 - **Input layer (64):** one input per pixel; each image is flattened into a row
   of 64 numbers
-- **Hidden layer 1 (64 neurons)** and **hidden layer 2 (32 neurons):** each
-  applies weights, a bias, and the ReLU activation (scikit-learn's default)
-- **Output layer (10 neurons):** one per digit; *softmax* turns them into
-  probabilities that add up to 1, and the prediction is the most likely digit
-- In total, the model learns **6,570** weights and biases
+- **Hidden layers (64 and 32 neurons):** each neuron applies weights, a bias,
+  and ReLU, scikit-learn's default activation [@scikitlearn2026mlpclassifier]
+- **Output layer (10 neurons):** one score per digit; **softmax** turns the 10
+  scores into probabilities that are positive and add up to 1
+- The prediction is the most probable digit; the model learns **6,570** weights
+  and biases
+- `(64, 32)` is an **illustrative** choice, not a rule
 :::
 
-::: {.column width="55%" .v-center-container}
+::: {.column width="50%" .v-center-container}
 ```{python}
 #| echo: false
 #| fig-alt: "Diagram of the example network: 64 input nodes, a hidden layer of 64 ReLU neurons, a hidden layer of 32 ReLU neurons, and 10 output nodes for the digits 0 to 9; only a few nodes per layer are drawn."
@@ -1104,6 +1089,20 @@ draw_digit_net()
 
 ::::
 
+## Choosing Layers and Widths {#layers .smaller}
+
+- The number of hidden layers and their widths are **hyperparameters**: no
+  formula picks them, so they are chosen by experiment [@goodfellow2016deep]
+- `(64, 32)` was an **illustrative** choice: two layers that narrow from 64
+  inputs toward 10 outputs
+- Compare candidates on data the model did not train on: a separate
+  **validation
+  set**, or **k-fold cross-validation** on the training data
+  [@scikitlearn2026gridsearch]
+- Keep the test set untouched until the final choice is made
+- **Grid search** tries every listed option; **random search** samples options
+  and is often more efficient when only a few hyperparameters matter
+  [@bergstra2012random]
 
 ## Training a Neural Network
 
@@ -1132,6 +1131,7 @@ print(f"{correct} of {len(y_test)} test images correct ({acc:.1%})")
 
 ```{python}
 #| echo: false
+#| fig-alt: "The first 16 test images, each titled with the model's predicted digit."
 preds = model.predict(X_test)
 fig, axes = plt.subplots(2, 8, figsize=(10, 3))
 for ax, img, p, t in zip(axes.flat, X_test, preds, y_test):
@@ -1141,6 +1141,7 @@ for ax, img, p, t in zip(axes.flat, X_test, preds, y_test):
 plt.show()
 ```
 
+- Each title is the model's prediction for that test image
 - **Green** = the prediction matches the true digit
 - **Red** = the prediction is wrong
 
@@ -1148,6 +1149,8 @@ plt.show()
 
 ```{python}
 #| echo: false
+#| fig-alt: "The 8 misclassified test images, each titled with its true digit, the
+#|   predicted digit, and the model's confidence."
 probs = model.predict_proba(X_test)
 wrong = np.where(preds != y_test)[0]
 fig, axes = plt.subplots(1, len(wrong), figsize=(10, 2))
@@ -1169,13 +1172,14 @@ plt.show()
 
 ## Limitations
 
-- **Small, unrealistic example:** real images are larger and messier
-- **Model ignores spatial structure:** flattening each image means we can't
-  examine which pixels are neighbors (like a CNN would)
-- **One train/test split:** a different split or random seed would yield
-  different accuracy
-- **scikit-learn is for small networks:** has no GPU support; large DL models
-  use frameworks like PyTorch or Tensorflow
+- **Small, clean example:** real images are larger and messier
+- **Dense layers lack CNN structure:** flattening keeps every pixel's value and
+  position, but each hidden neuron connects to all 64 pixels; a CNN adds local
+  connections and filters shared across locations
+- **One train/test split:** a different split or random seed would give a
+  somewhat different accuracy
+- **scikit-learn is for small networks:** it has no GPU support; large models
+  use frameworks such as PyTorch or TensorFlow [@scikitlearn2026neuralnetworks]
 
 ## Key Takeaways
 
@@ -1198,9 +1202,4 @@ product for submission
 ## Sources {.smaller}
 
 ::: {#refs}
-:::
-
-## Sources (continued) {.smaller}
-
-::: {#refs-continued .references .csl-bib-body .hanging-indent}
 :::
