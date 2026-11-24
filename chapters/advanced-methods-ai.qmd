@@ -35,7 +35,8 @@ connect the workflows to checks, limitations, and practical takeaways.
 
 [Presentation](../topic/deep-learning/) by **Ruhama Choudhury**.
 
-Explains what makes a neural network "deep,", examines eight architectures and 
-the shapes of data each suits. A reproducible handwritten-digit example trains
-a small network in scikit-learn and interprets the errors before closing with
-limitations and takeaways.
+Explains what makes a neural network "deep" and surveys eight architectures
+and the shapes of data each suits. A reproducible handwritten-digit example
+trains a small network in scikit-learn, interprets its errors, and uses
+cross-validation to compare layer choices before closing with limitations and
+takeaways.
