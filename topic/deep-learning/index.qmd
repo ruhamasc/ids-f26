@@ -434,7 +434,7 @@ def show_model(name, figsize=(5.5, 3.3), title=False):
 
 ## What Is Deep Learning?
 
-**Deep Learning** is a subset of machine learning driven by mutilayered neural
+**Deep Learning** is a subset of machine learning driven by multilayered neural
 networks inspired by the structure of the human brain.
 
 It is responsible for powering many forms of modern artificial intelligence,
@@ -760,7 +760,7 @@ show_model("cnn")
 | **Process** | Filters scan an image for local patterns; later layers combine them into increasingly complex patterns |
 | **Purpose** | Handles grid-shaped data (especially images) |
 | **Example(s) of Application** | Facial identification, image grouping in photo apps |
-| **How it Differs** | Each neuron connects only to a small local patch and each filter is reused acrosss all spatial locations in the image |
+| **How it Differs** | Each neuron connects only to a small local patch, and each filter is reused across all spatial locations in the image |
 | **Other Information** | Pooling layers shrink the feature maps as the image moves through the network |
 
 [← Back](#types)
@@ -869,7 +869,7 @@ show_model("transformer")
 | **Process** | A *selective state space model*: keeps a fixed-size hidden state and updates it once per input; the update depends on the current input, so each input controls how much the state changes |
 | **Purpose** | Handles long sequential data |
 | **Example(s) of Application** | DNA and genomics sequences, audio, long time series |
-| **How it Differs** | Cost tends to grow linearly, tends to train faster and remember better |
+| **How it Differs** | Selective state-space models have linear sequence-length computation; full self-attention has quadratic sequence-length computation [@gu2023mamba]. |
 | **Other Information** | Very new (introduced in 2023 by Albert Gu and Tri Dao) |
 
 [← Back](#types)
@@ -880,7 +880,7 @@ show_model("transformer")
 
 ```{python}
 #| echo: false
-#| fig-alt: "Diagram of a Mamba model: the words 'The', 'um', 'cat', 'uh', 'sat', 'down' feed a chain of memory states; the filler words 'um' and 'uh' are grayed out and skipped, while the other words are kept."
+#| fig-alt: "Diagram of a Mamba model: the words 'The cat sat on the mat' feed a chain of memory states. Arrow widths vary to illustrate that the input can control the strength of each state update."
 show_model("mamba")
 ```
 
